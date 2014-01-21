@@ -6,22 +6,19 @@
 class Body
 {
 public:
-	Body(int m, sf::Vector2f pos, float vel);
+	Body(sf::Vector2f pos, int m, sf::Vector2f(dir));
 
 	void applyGravityOf(const Body& b, float dt);
-	void update(const Body& b, float dt);
-	float distanceTo(const Body& b);
+	float getDistanceTo(const Body& b);
 	void draw(sf::RenderWindow& window);
-	int getMass() const;
-	sf::Vector2f getPosition() const ;
+
+	bool operator!=(const Body& b);
 
 private:
-	int mass;
-	float velocity;
-	float accel;
-	sf::Vector2f position;
-
 	sf::CircleShape shape;
+	sf::Vector2f position;
+	sf::Vector2f direction;
+	int mass;
 };
 
 #endif // BODY_HPP

@@ -1,45 +1,116 @@
+#include <vector>
 #include <iostream>
-#include "Body.hpp"
+
 #include <SFML/Graphics.hpp>
 
+#include "Body.hpp"
+
+#define SIZE 6
+#define ACCEL 9.82
+
 using namespace sf;
+using namespace std;
+
+bool operator!=(const Body& a, const Body& b);
 
 int main()
 {
-	RenderWindow window(VideoMode(800, 600), "Gravity Simulation");
+	RenderWindow window(VideoMode(800, 600), "");
 
-	Body earth(10, Vector2f(400, 300), 0);
-	Body mun(2, Vector2f(300, 300), 2);
+	// Drawable elements
+	vector<Body> planets;
+	VertexArray line(Lines, 2);
 
+	// Logic vars
 	Clock timer;
+	float delta_t(0);
 	bool running = true;
+	bool is_placing = false;
+
 	while (running)
 	{
-		Event event;
-		while (window.pollEvent(event))
+		Event evt;
+		while (window.pollEvent(evt))
 		{
-			switch (event.type)
+			if (evt.type == Event::Closed)
 			{
-			case Event::Closed:
 				running = false;
-				   break;
-			default:
-				break;
+			}
+
+			if (evt.type == Event::KeyPressed)
+			{
+				if (evt.key.code == Keyboard::Escape)
+				{
+					running = false;
+				}
+			}
+
+			if (evt.type == Event::MouseButtonPressed)
+			{
+				is_placing = true;
+
+				line[0].position = Vector2f(evt.mouseButton.x, evt.mouseButton.y);
+				line[1].position = Vector2f(evt.mouseButton.x, evt.mouseButton.y);
+			}
+
+			if (evt.type == Event::MouseMoved)
+			{
+				if (is_placing)
+				{
+					line[1].position = Vector2f(evt.mouseMove.x, evt.mouseMove.y);
+				}
+			}
+
+			if (evt.type == Event::MouseButtonReleased)
+			{
+				if (is_placing)
+				{
+					Vector2f position(line[0].position.x - SIZE,
+							line[0].position.y - SIZE);
+					Body p(position, SIZE, line[1].position - line[0].position);
+					cout << "vec: " << (line[1].position - line[0].position).x<<';'<<(line[1].position - line[0].position).y << endl;
+
+					planets.push_back(p);
+				}
+
+				is_placing = false;
 			}
 		}
 
-		earth.applyGravityOf(mun, timer.restart().asSeconds());
-		mun.applyGravityOf(earth, timer.restart().asSeconds());
-
 		window.clear();
-		earth.draw(window);
-		mun.draw(window);
-		window.display();
 
-		earth.update(mun, timer.restart().asSeconds());
-		mun.update(earth, timer.restart().asSeconds());
+		// Delta T
+		delta_t = timer.restart().asSeconds();
+
+		// Vector Preview - wow - need an arrow
+		if (is_placing)
+		{
+			window.draw(line);
+		}
+
+		// Planets
+		if (planets.size() > 2)
+		{
+			for (Body& p : planets)
+			{
+				for (Body& b : planets)
+				{
+					if (p != b)
+					{
+						cout << "applying gravity" << endl;
+						p.applyGravityOf(b, delta_t);
+					}
+				}
+			}
+		}
+
+		for (Body& b : planets)
+		{
+			b.draw(window);
+		}
+
+		window.display();
 	}
 
 	return 0;
 }
-

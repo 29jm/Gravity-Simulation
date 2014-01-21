@@ -1,54 +1,44 @@
-#include "Body.hpp"
 #include <cmath>
+#include <iostream>
 
-Body::Body(int m, sf::Vector2f pos, float vel)
-	: mass(m), velocity(vel), position(pos), shape(m)
+#include "Body.hpp"
+
+#define G 9.82
+#define SIZE 6
+
+using namespace sf;
+using namespace std;
+
+Body::Body(Vector2f pos, int m, Vector2f dir)
+	: shape(7), position(pos), direction(dir), mass(m)
 {
-
-}
-
-int Body::getMass() const
-{
-	return mass;
-}
-
-sf::Vector2f Body::getPosition() const
-{
-	return position;
-}
-
-float Body::distanceTo(const Body &b)
-{
-	sf::Vector2f pos2 = b.getPosition();
-
-	return sqrt((position.x - position.y)*(position.x - position.y) + (pos2.x - pos2.y)*(pos2.x - pos2.y));
+	shape.setFillColor(Color::Red);
+	cout << "New body : pos(" << position.x << ';' << position.y << ")" << endl;
 }
 
 void Body::applyGravityOf(const Body &b, float dt)
 {
-	int m2 = b.getMass();
-	float d = distanceTo(b);
+	//cout << "distance : " << getDistanceTo(b) << endl;
 
-	float force = 9.82*(mass*m2/d*d);
-
-	accel = force / mass;
-	position.x += (dt * (velocity + dt*accel / 2)) / 2;
-	position.y += (dt * (velocity + dt*accel / 2)) / 2;
+	float F = G*(mass*b.mass / getDistanceTo(b)*getDistanceTo(b));
+	direction.x += F * dt; // (F / mass) * dt
+	direction.y += F * dt;
+	position += direction;
 }
 
-void Body::update(const Body& b, float dt)
+float Body::getDistanceTo(const Body &b)
 {
-	int m2 = b.getMass();
-	float d = distanceTo(b);
-
-	float force = 9.82*(mass*m2/d*d);
-
-	int new_accel = force / mass;
-	velocity += dt * (accel+new_accel) / 2;
+	Vector2f move = b.position - position;
+	return sqrt(move.x*move.x + move.y*move.y);
 }
 
-void Body::draw(sf::RenderWindow &window)
+void Body::draw(RenderWindow &window)
 {
 	shape.setPosition(position);
 	window.draw(shape);
+}
+
+bool Body::operator!=(const Body& b)
+{
+	return (this->direction != b.direction) && (this->mass != b.mass) && (this->position != b.position);
 }
