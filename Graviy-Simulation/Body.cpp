@@ -4,7 +4,7 @@
 
 #include "Body.hpp"
 
-#define G 9.82
+#define G 9.82 // TODO: Get the right number
 #define SIZE 6
 
 using namespace sf;
@@ -24,10 +24,15 @@ void Body::move(float dt)
 
 void Body::applyGravityOf(const Body &b, float dt)
 {
-	float F = fabs(G*(mass*b.mass / getDistanceTo(b)*getDistanceTo(b)));
-	direction.x += (F / mass) * dt; // (F / mass) * dt
-	direction.y += (F / mass) * dt;
-	position += direction;
+	// Get the force between bodies
+	float F = fabs(G * (mass*b.mass / getDistanceTo(b)*getDistanceTo(b) ) );
+
+	// Get the unit vector to the other body
+	Vector2f to_Body(b.position - position);
+	to_Body = to_Body / getDistanceTo(b);
+
+	// Apply the force in the direction of the other body
+	position += (to_Body * F) * dt;
 }
 
 float Body::getDistanceTo(const Body &p)
