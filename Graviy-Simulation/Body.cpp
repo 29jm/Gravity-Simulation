@@ -18,11 +18,9 @@ using namespace std;
 Body::Body(Vector2f pos, int m, Vector2f dir)
 	: position(pos), direction(dir), mass(m)
 {
-	/*
 	float volume = DENSITY / mass;
 	float radius = cbrt(3*volume/4*M_PI) * 0.5;
-	*/
-	shape.setRadius(mass / 2);
+	shape.setRadius(radius);
 	shape.setFillColor(Color::Red);
 }
 
@@ -34,13 +32,17 @@ void Body::move(float dt)
 void Body::applyGravityOf(const Body &b, float dt)
 {
 	// Get the force between bodies
-	float F = fabs(G * ((mass*b.mass) / (getDistanceTo(b)*getDistanceTo(b)) ) );
+	if (getDistanceTo(b) < 0)
+		cout << "R" << endl;
+	float F = fabs(G * (mass*b.mass / getDistanceTo(b)*getDistanceTo(b) ) );
+	// cout << F << endl;
 
 	// Get the unit vector to the other body
 	Vector2f to_Body(b.position - position);
-	to_Body = to_Body / getDistanceTo(b); // unit vector = v / v.length
+	to_Body = to_Body / getDistanceTo(b);
 
 	// Apply the force in the direction of the other body
+	cout << ((to_Body * F) * dt).x << ';' << ((to_Body * F) * dt).y << endl;
 	position += (to_Body * F) * dt;
 }
 
@@ -49,7 +51,7 @@ float Body::getDistanceTo(const Body &p)
 	Vector2f a = this->position;
 	Vector2f b = p.position;
 
-	return sqrt((b.x-a.x)*(b.x-a.x) + (b.y*a.y)*(b.y*a.y));
+	return sqrt((b.x-a.x)*(b.x-a.x)+(b.y*a.y)*(b.y*a.y));
 }
 
 void Body::draw(RenderWindow &window)
