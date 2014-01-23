@@ -89,20 +89,29 @@ int main()
 		}
 
 		// Planets
-		if (planets.size() > 2)
+		if (planets.size())
 		{
-			for (Body& p : planets)
+			for (Body& b : planets)
 			{
-				for (Body& b : planets)
+				b.move(delta_t);
+			}
+		}
+
+		/*
+		if (planets.size() > 1)
+		{
+			for (unsigned int i = 0; i < planets.size(); i++)
+			{
+				for (unsigned int j = 0; j < planets.size();j++)
 				{
-					if (p != b)
+					if (i != j)
 					{
-						cout << "applying gravity" << endl;
-						p.applyGravityOf(b, delta_t);
+						planets[i].applyGravityOf(planets[j], delta_t);
 					}
 				}
 			}
 		}
+		*/
 
 		for (Body& b : planets)
 		{

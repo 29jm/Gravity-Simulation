@@ -8,8 +8,9 @@ class Body
 public:
 	Body(sf::Vector2f pos, int m, sf::Vector2f(dir));
 
+	void move(float dt);
 	void applyGravityOf(const Body& b, float dt);
-	float getDistanceTo(const Body& b);
+	float getDistanceTo(const Body& p);
 	void draw(sf::RenderWindow& window);
 
 	bool operator!=(const Body& b);
