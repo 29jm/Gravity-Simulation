@@ -5,7 +5,7 @@
 
 #include "Body.hpp"
 
-#define MASS 10
+#define MASS 1
 #define BASE_LINE 2
 
 using namespace sf;
@@ -54,6 +54,7 @@ int main()
 				{
 				case Keyboard::Add:
 					mass += 100;
+					cout << "Mass is now " << mass << endl;
 					break;
 				case Keyboard::Subtract:
 					mass -= 100;
@@ -92,9 +93,7 @@ int main()
 				{
 					Vector2f position(line[0].position.x - MASS,
 							line[0].position.y - MASS);
-					Body p(position, MASS, line[1].position - line[0].position);
-					// cout << "New Body at: " << (line[1].position - line[0].position).x << ';'
-					//				<< (line[1].position - line[0].position).y << endl;
+					Body p(position, mass, line[1].position - line[0].position);
 
 					planets.push_back(p);
 				}
@@ -119,14 +118,6 @@ int main()
 		}
 
 		// Planets
-		if (planets.size())
-		{
-			for (Body& b : planets)
-			{
-				b.move(delta_t);
-			}
-		}
-
 		if (planets.size() > 1)
 		{
 			for (unsigned int i = 0; i < planets.size(); i++)
@@ -135,15 +126,28 @@ int main()
 				{
 					if (i != j)
 					{
+						if (planets[i].collideWith(planets[j]))
+						{
+							Body p(planets[i].getPosition(), planets[i].getMass()+planets[j].getMass(),
+								   planets[i].getDirection()+planets[j].getDirection());
+							planets.erase(planets.begin()+i);
+							planets.erase(planets.begin()+j);
+							planets.push_back(p);
+						}
+
 						planets[i].applyGravityOf(planets[j], delta_t);
 					}
 				}
 			}
 		}
 
-		for (Body& b : planets)
+		if (planets.size())
 		{
-			b.draw(window);
+			for (Body& b : planets)
+			{
+				b.move(delta_t);
+				b.draw(window);
+			}
 		}
 
 		window.display();
