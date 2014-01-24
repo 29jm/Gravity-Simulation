@@ -53,17 +53,24 @@ int main()
 				switch (evt.key.code) // TODO: +- mass; toggle "clear()"; pause;
 				{
 				case Keyboard::Add:
-					mass += 100;
+					mass += (mass == 1 ? 99 : 100);
 					cout << "Mass is now " << mass << endl;
 					break;
 				case Keyboard::Subtract:
-					mass -= 100;
+					mass -= (mass > 0 ? 100 : 0);
+					if (mass < 0)
+					{
+						mass = 1;
+					}
+					cout << "Mass is now " << mass << endl;
 					break;
 				case Keyboard::T:
 					trace = !trace;
+					cout << "Trace mode activated" << endl;
 					break;
 				case Keyboard::Space:
 					is_placing = false;
+					cout << "Planet placement cancelled" << endl;
 					break;
 				default:
 					break;
