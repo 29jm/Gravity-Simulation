@@ -31,9 +31,6 @@ void Body::move(float dt)
 
 void Body::applyGravityOf(const Body &b, float dt)
 {
-	// Get the force between bodies
-	if (getDistanceTo(b) < 0)
-		cout << "R" << endl;
 	float F = fabs(G * (mass*b.mass / getDistanceTo(b)*getDistanceTo(b) ) );
 	// cout << F << endl;
 
@@ -42,8 +39,8 @@ void Body::applyGravityOf(const Body &b, float dt)
 	to_Body = to_Body / getDistanceTo(b);
 
 	// Apply the force in the direction of the other body
-	cout << ((to_Body * F) * dt).x << ';' << ((to_Body * F) * dt).y << endl;
-	position += (to_Body * F) * dt;
+	direction += (to_Body * F) * dt;
+	// position += (to_Body * F) * dt;
 }
 
 float Body::getDistanceTo(const Body &p)
