@@ -5,18 +5,15 @@
 
 #include "Body.hpp"
 
-#define SIZE 6
+#define MASS 10
 #define BASE_LINE 2
-// #define ACCEL 9.82
 
 using namespace sf;
 using namespace std;
 
-bool operator!=(const Body& a, const Body& b);
-
 int main()
 {
-	RenderWindow window(VideoMode(800, 600), "");
+	RenderWindow window(VideoMode(800, 600), "Gravity Simulation by Johan");
 
 	// Drawable elements
 	vector<Body> planets;
@@ -26,8 +23,10 @@ int main()
 	// Logic vars
 	Clock timer;
 	float delta_t(0);
+	int mass(MASS);
 	bool running = true;
 	bool is_placing = false;
+	bool trace = false;
 
 	// Some inits
 	line[0].color = Color::Blue;
@@ -49,6 +48,24 @@ int main()
 				if (evt.key.code == Keyboard::Escape)
 				{
 					running = false;
+				}
+
+				switch (evt.key.code) // TODO: +- mass; toggle "clear()"; pause;
+				{
+				case Keyboard::Add:
+					mass += 100;
+					break;
+				case Keyboard::Subtract:
+					mass -= 100;
+					break;
+				case Keyboard::T:
+					trace = !trace;
+					break;
+				case Keyboard::Space:
+					is_placing = false;
+					break;
+				default:
+					break;
 				}
 			}
 
@@ -73,11 +90,11 @@ int main()
 			{
 				if (is_placing)
 				{
-					Vector2f position(line[0].position.x - SIZE,
-							line[0].position.y - SIZE);
-					Body p(position, SIZE, line[1].position - line[0].position);
-					cout << "New Body at: " << (line[1].position - line[0].position).x << ';'
-									<< (line[1].position - line[0].position).y << endl;
+					Vector2f position(line[0].position.x - MASS,
+							line[0].position.y - MASS);
+					Body p(position, MASS, line[1].position - line[0].position);
+					// cout << "New Body at: " << (line[1].position - line[0].position).x << ';'
+					//				<< (line[1].position - line[0].position).y << endl;
 
 					planets.push_back(p);
 				}
@@ -86,12 +103,15 @@ int main()
 			}
 		}
 
-		window.clear();
+		if (!trace)
+		{
+			window.clear();
+		}
 
 		// Delta T
 		delta_t = timer.restart().asSeconds();
 
-		// Vector Preview - wow - need an arrow
+		// Vector Preview - wow - need an arrow - hard
 		if (is_placing)
 		{
 			window.draw(line);
