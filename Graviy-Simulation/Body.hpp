@@ -14,7 +14,7 @@ public:
 	bool collideWith(const Body& p);
 	sf::Vector2f getPosition();
 	sf::Vector2f getDirection();
-	int getMass();
+	float getMass();
 
 private:
 	float getDistanceTo(const Body& p);
@@ -22,7 +22,7 @@ private:
 	sf::CircleShape shape;
 	sf::Vector2f position;
 	sf::Vector2f direction;
-	int mass;
+	float mass;
 };
 
 #endif // BODY_HPP
