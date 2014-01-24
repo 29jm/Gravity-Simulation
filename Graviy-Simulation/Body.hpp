@@ -10,12 +10,15 @@ public:
 
 	void move(float dt);
 	void applyGravityOf(const Body& b, float dt);
-	float getDistanceTo(const Body& p);
 	void draw(sf::RenderWindow& window);
-
-	bool operator!=(const Body& b);
+	bool collideWith(const Body& p);
+	sf::Vector2f getPosition();
+	sf::Vector2f getDirection();
+	int getMass();
 
 private:
+	float getDistanceTo(const Body& p);
+
 	sf::CircleShape shape;
 	sf::Vector2f position;
 	sf::Vector2f direction;
