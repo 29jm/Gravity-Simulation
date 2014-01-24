@@ -8,8 +8,8 @@
 
 #include "Body.hpp"
 
-#define G 15 // TODO: Get the right number
-#define DENSITY 7878 // kg/m^3
+#define G 0.0000667 // TODO: Get the right number
+#define DENSITY 10 // kg/m^3
 
 using namespace sf;
 using namespace std;
@@ -17,12 +17,35 @@ using namespace std;
 Body::Body(Vector2f pos, int m, Vector2f dir)
 	: position(pos), direction(dir), mass(m)
 {
+	// Radius
 	float volume = mass / DENSITY;
 	float radius = cbrt((3*volume)/(4*M_PI));
 	radius = (radius <= 1 ? 1 : radius);
-	cout << "New planet with radius " << radius << endl;
+
+	// Color
+	Color c;
+	if (mass < 1000)
+	{
+		c.r = 102;
+		c.g =  51;
+		c.b = 0;
+	}
+
+	if (mass > 1000 && mass < 10000)
+	{
+		c.r = 255;
+		c.g = 153;
+		c.b = 51;
+	}
+	else
+	{
+		c.r = 255;
+	}
+
 	shape.setRadius(radius);
-	shape.setFillColor(Color::Red);
+	shape.setFillColor(c);
+
+	cout << "New planet with radius " << radius << endl;
 }
 
 void Body::move(float dt)
@@ -74,7 +97,7 @@ Vector2f Body::getPosition()
 	return position;
 }
 
-int Body::getMass()
+float Body::getMass()
 {
 	return mass;
 }
