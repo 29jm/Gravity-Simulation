@@ -140,11 +140,15 @@ int main()
 					{
 						if (planets[i].collideWith(planets[j]))
 						{
-							Body p(planets[i].getPosition(), planets[i].getMass()+planets[j].getMass(),
-								   planets[i].getDirection()+planets[j].getDirection());
-							planets.erase(planets.begin()+i);
-							planets.erase(planets.begin()+j);
-							planets.push_back(p);
+                            Vector2f p1m1 = planets[i].mass*planets[i].direction;
+                            Vector2f p2m2 = planets[j].mass*planets[j].direction;
+
+                            Vector2f Pt = p1m1+p2m2;
+                            float Mt = planets[i].mass+planets[j].mass;
+                            Vector2f Df = Pt / Mt;
+
+                            planets[i].direction = Df;
+                            planets.erase(planets.begin()+j);
 						}
 
 						planets[i].applyGravityOf(planets[j], delta_t);
