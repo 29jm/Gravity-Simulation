@@ -55,14 +55,15 @@ void Body::move(float dt)
 
 void Body::applyGravityOf(const Body &b, float dt)
 {
-	float F = fabs(G * ( mass*b.mass / getDistanceTo(b)*getDistanceTo(b) ) );
+    float F = fabs(G * mass*b.mass / getDistanceTo(b)*getDistanceTo(b) );
+    // cout << "F=" << F << endl;
 
 	// Get the unit vector to the other body
 	Vector2f to_Body(b.position - position);
 	to_Body = to_Body / getDistanceTo(b);
 
 	// Apply the force in the direction of the other body
-	direction += (to_Body * F) * dt;
+    direction += (to_Body * F) * dt;
 }
 
 float Body::getDistanceTo(const Body &p)
