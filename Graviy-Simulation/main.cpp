@@ -141,6 +141,8 @@ int main()
 		universe.draw(window);
 		
 		window.display();
+
+		sleep(milliseconds(3));
 	}
 
 	return 0;
