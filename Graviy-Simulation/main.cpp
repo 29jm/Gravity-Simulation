@@ -3,6 +3,7 @@
 
 #include <SFML/Graphics.hpp>
 
+#include "Universe.hpp"
 #include "Body.hpp"
 
 #define MASS 1
@@ -16,7 +17,7 @@ int main()
 	RenderWindow window(VideoMode(800, 600), "Gravity Simulation by Johan");
 
 	// Drawable elements
-	vector<Body> planets;
+	Universe universe;
 	VertexArray line(Lines, 2);
 	CircleShape base_line(BASE_LINE);
 
@@ -54,12 +55,12 @@ int main()
 				{
                 case Keyboard::PageUp:
 				case Keyboard::Add:
-					mass += (mass == 1 ? 99 : 100);
+					mass += 100;
 					cout << "Mass is now " << mass << endl;
 					break;
                 case Keyboard::PageDown:
 				case Keyboard::Subtract:
-					mass -= (mass > 0 ? 100 : 0);
+					mass = (mass > 0 ? mass - 100 : 100);
 					if (mass < 0)
 					{
 						mass = 1;
@@ -84,12 +85,19 @@ int main()
 
 			if (evt.type == Event::MouseButtonPressed)
 			{
-				is_placing = true;
+                if (evt.key.shift)
+                {
+                    universe.eraseAt(Vector2f(evt.mouseButton.x, evt.mouseButton.y));
+                }
+                else
+                {
+                    is_placing = true;
 
-				line[0].position = Vector2f(evt.mouseButton.x, evt.mouseButton.y);
-				line[1].position = Vector2f(evt.mouseButton.x, evt.mouseButton.y);
-				base_line.setPosition(evt.mouseButton.x - BASE_LINE, evt.mouseButton.y - BASE_LINE);
-			}
+                    line[0].position = Vector2f(evt.mouseButton.x, evt.mouseButton.y);
+                    line[1].position = Vector2f(evt.mouseButton.x, evt.mouseButton.y);
+                    base_line.setPosition(evt.mouseButton.x - BASE_LINE, evt.mouseButton.y - BASE_LINE);
+                }
+            }
 
 			if (evt.type == Event::MouseMoved)
 			{
@@ -103,11 +111,10 @@ int main()
 			{
 				if (is_placing)
 				{
-					Vector2f position(line[0].position.x - MASS,
+					Vector2i position(line[0].position.x - MASS,
 							line[0].position.y - MASS);
-					Body p(position, mass, line[1].position - line[0].position);
 
-					planets.push_back(p);
+					universe.addPlanet(position, mass, line[1].position - line[0].position);
 				}
 
 				is_placing = false;
@@ -130,42 +137,9 @@ int main()
 		}
 
 		// Planets
-		if (planets.size() > 1)
-		{
-			for (unsigned int i = 0; i < planets.size(); i++)
-			{
-				for (unsigned int j = 0; j < planets.size();j++)
-				{
-					if (i != j)
-					{
-						if (planets[i].collideWith(planets[j]))
-						{
-                            Vector2f p1m1 = planets[i].mass*planets[i].direction;
-                            Vector2f p2m2 = planets[j].mass*planets[j].direction;
-
-                            Vector2f Pt = p1m1+p2m2;
-                            float Mt = planets[i].mass+planets[j].mass;
-                            Vector2f Df = Pt / Mt;
-
-                            planets[i].direction = Df;
-                            planets.erase(planets.begin()+j);
-						}
-
-						planets[i].applyGravityOf(planets[j], delta_t);
-					}
-				}
-			}
-		}
-
-		if (planets.size())
-		{
-			for (Body& b : planets)
-			{
-				b.move(delta_t);
-				b.draw(window);
-			}
-		}
-
+		universe.move(delta_t);
+		universe.draw(window);
+		
 		window.display();
 	}
 
