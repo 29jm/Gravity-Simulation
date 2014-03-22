@@ -6,23 +6,22 @@
 class Body
 {
 public:
-	Body(sf::Vector2f pos, int m, sf::Vector2f(dir));
+    Body(sf::Vector2i pos, float m, sf::Vector2f dir);
 
 	void move(float dt);
 	void applyGravityOf(const Body& b, float dt);
 	void draw(sf::RenderWindow& window);
-	bool collideWith(const Body& p);
-	sf::Vector2f getPosition();
-	sf::Vector2f getDirection();
-	float getMass();
+    bool collideWith(const Body& p);
+    bool contains(const sf::Vector2f& point);
+
+    sf::Vector2f position;
+    sf::Vector2f direction;
+    float mass;
 
 private:
 	float getDistanceTo(const Body& p);
 
 	sf::CircleShape shape;
-	sf::Vector2f position;
-	sf::Vector2f direction;
-	float mass;
 };
 
 #endif // BODY_HPP

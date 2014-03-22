@@ -8,13 +8,13 @@
 
 #include "Body.hpp"
 
-#define G 0.0000667 // TODO: Get the right number
+#define G 0.67 // TODO: Get the right number
 #define DENSITY 10 // kg/m^3
 
 using namespace sf;
 using namespace std;
 
-Body::Body(Vector2f pos, int m, Vector2f dir)
+Body::Body(Vector2i pos, float m, Vector2f dir)
 	: position(pos), direction(dir), mass(m)
 {
 	// Radius
@@ -45,7 +45,7 @@ Body::Body(Vector2f pos, int m, Vector2f dir)
 	shape.setRadius(radius);
 	shape.setFillColor(c);
 
-	cout << "New planet with radius " << radius << endl;
+	cout << "New planet with radius " << radius << " at position (" << pos.x << ';' << pos.y << ")" << endl;
 }
 
 void Body::move(float dt)
@@ -55,23 +55,30 @@ void Body::move(float dt)
 
 void Body::applyGravityOf(const Body &b, float dt)
 {
-    float F = fabs(G * mass*b.mass / getDistanceTo(b)*getDistanceTo(b) );
-    // cout << "F=" << F << endl;
+    float r = getDistanceTo(b);
+
+    float F = (G*mass*b.mass) / (r*r);
+
+    // Make the force proportional to the mass
+    F /= mass;
 
 	// Get the unit vector to the other body
 	Vector2f to_Body(b.position - position);
-	to_Body = to_Body / getDistanceTo(b);
+	to_Body = to_Body / r;
 
-	// Apply the force in the direction of the other body
+    // Apply the force in the direction of the other body
     direction += (to_Body * F) * dt;
 }
 
 float Body::getDistanceTo(const Body &p)
 {
-	Vector2f a = this->position;
+    Vector2f a = position;
 	Vector2f b = p.position;
+    Vector2f c = b - a;
 
-	return sqrt((b.x-a.x)*(b.x-a.x)+(b.y*a.y)*(b.y*a.y));
+    return sqrt(c.x*c.x + c.y * c.y);
+
+    //return sqrt((b.x-a.x)*(b.x-a.x)+(b.y*a.y)*(b.y*a.y));
 }
 
 void Body::draw(RenderWindow &window)
@@ -93,17 +100,16 @@ bool Body::collideWith(const Body &p)
 	return true;
 }
 
-Vector2f Body::getPosition()
+bool Body::contains(const Vector2f &point)
 {
-	return position;
-}
+    Vector2f a = position;
+    Vector2f b = point;
+    Vector2f c = b - a;
 
-float Body::getMass()
-{
-	return mass;
-}
+    if ((c.x*c.x + c.y * c.y) <= shape.getRadius()*shape.getRadius())
+    {
+        return true;
+    }
 
-Vector2f Body::getDirection()
-{
-	return direction;
+    return false;
 }
