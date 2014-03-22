@@ -8,42 +8,31 @@
 
 #include "Body.hpp"
 
-#define G 0.67 // TODO: Get the right number
-#define DENSITY 10 // kg/m^3
+#define G 9.82 // TODO: Get the right number
+#define DENSITY 100 // kg/m^3
 
 using namespace sf;
 using namespace std;
 
-Body::Body(Vector2i pos, float m, Vector2f dir)
+Body::Body(Vector2f pos, int m, Vector2f dir)
 	: position(pos), direction(dir), mass(m)
 {
+	if (mass <= 0)
+	{
+		cout << "FATAL ERROR: MASS <= 0" << endl;
+	}
+
 	// Radius
 	float volume = mass / DENSITY;
-	float radius = cbrt((3*volume)/(4*M_PI));
-	radius = (radius <= 1 ? 1 : radius);
-
-	// Color
-	Color c;
-	if (mass < 1000)
+	radius = cbrt((3*volume)/(4*M_PI));
+	
+	if (radius <= 1)
 	{
-		c.r = 102;
-		c.g =  51;
-		c.b = 0;
-	}
-
-	if (mass > 1000 && mass < 10000)
-	{
-		c.r = 255;
-		c.g = 153;
-		c.b = 51;
-	}
-	else
-	{
-		c.r = 255;
+		radius = 1;
 	}
 
 	shape.setRadius(radius);
-	shape.setFillColor(c);
+	shape.setFillColor(Color::Red);
 
 	cout << "New planet with radius " << radius << " at position (" << pos.x << ';' << pos.y << ")" << endl;
 }
@@ -56,6 +45,12 @@ void Body::move(float dt)
 void Body::applyGravityOf(const Body &b, float dt)
 {
     float r = getDistanceTo(b);
+
+    if (r <= 0)
+    {
+    	cout << "FATAL ERROR: distance <= 0" << endl;
+    	return;
+    }
 
     float F = (G*mass*b.mass) / (r*r);
 
@@ -77,8 +72,6 @@ float Body::getDistanceTo(const Body &p)
     Vector2f c = b - a;
 
     return sqrt(c.x*c.x + c.y * c.y);
-
-    //return sqrt((b.x-a.x)*(b.x-a.x)+(b.y*a.y)*(b.y*a.y));
 }
 
 void Body::draw(RenderWindow &window)
