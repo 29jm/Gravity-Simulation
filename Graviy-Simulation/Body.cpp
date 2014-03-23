@@ -26,7 +26,7 @@ Body::Body(Vector2f pos, int m, Vector2f dir)
 	float volume = mass / DENSITY;
 	radius = cbrt((3*volume)/(4*M_PI));
 	
-	if (radius <= 1)
+	if (radius < 1)
 	{
 		radius = 1;
 	}
@@ -43,6 +43,11 @@ void Body::move(float dt)
 void Body::applyGravityOf(const Body &b, float dt)
 {
     float r = getDistanceTo(b);
+
+    if (r <= 0)
+    {
+    	return;
+    }
 
     float F = (G*mass*b.mass) / (r*r);
 
