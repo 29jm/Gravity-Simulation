@@ -10,7 +10,9 @@ Features
 * Give them the speed and direction you want just by moving the mouse during placement
 * Keep the path of the planets (press T)
 * Move the view (Control + Mouse)
+* Zoom the view (mouse wheel)
 * The planets collide into a new, bigger planet
+* Cross platform
 
 More features to come
 
