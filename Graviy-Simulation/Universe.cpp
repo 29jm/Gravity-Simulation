@@ -15,7 +15,7 @@ void Universe::addPlanet(Body p)
 
 void Universe::move(float delta_t)
 {
-	if (planets.size() < 2)
+	if (planets.size() < 1)
 	{
 		return;
 	}
