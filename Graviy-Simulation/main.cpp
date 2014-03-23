@@ -27,6 +27,7 @@ int main()
 	float delta_t(0);
 	int mass(MASS);
 	Vector2f mousePosition;
+	Vector2f start, end;
 	bool running = true;
 	bool is_placing = false;
 	bool is_moving = false;
@@ -138,7 +139,9 @@ int main()
                     is_placing = true;
 
                     line[0].position = window.mapPixelToCoords(Vector2i(evt.mouseButton.x, evt.mouseButton.y));
-                    line[1].position = window.mapPixelToCoords(Vector2i(evt.mouseButton.x, evt.mouseButton.y));
+                    line[1].position = line[0].position;
+                    start = Vector2f(evt.mouseButton.x, evt.mouseButton.y);
+                    end = start;
 
                     Vector2f base = 
                     	window.mapPixelToCoords(Vector2i(evt.mouseButton.x - BASE_LINE, evt.mouseButton.y - BASE_LINE));
@@ -151,6 +154,7 @@ int main()
 				if (is_placing)
 				{
 					line[1].position = window.mapPixelToCoords(Vector2i(evt.mouseMove.x, evt.mouseMove.y));
+					end = Vector2f(evt.mouseMove.x, evt.mouseMove.y);
 				}
 
 				if (is_moving)
@@ -169,8 +173,9 @@ int main()
 				{
 					is_placing = false;
 
-					Vector2f direction = window.mapPixelToCoords(Vector2i(line[1].position - line[0].position));
+					Vector2f direction = end - start;
 					cout << "direction: " << direction.x << ';' << direction.y << endl;
+
 					Body p(Vector2f(0, 0), mass, direction);
 
 					Vector2f position = Vector2f(line[0].position.x,
