@@ -66,12 +66,9 @@ void Universe::move(float delta_t)
 
 void Universe::draw(RenderWindow& window)
 {
-	if (planets.size())
+	for (Body& b : planets)
 	{
-		for (Body& b : planets)
-		{
-			b.draw(window);
-		}
+		b.draw(window);
 	}
 }
 
