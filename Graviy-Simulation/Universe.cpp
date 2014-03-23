@@ -33,28 +33,24 @@ void Universe::move(float delta_t)
 					Vector2f d1(planets[i].direction), d2(planets[j].direction);
 
 					if (m1 == 0 || m2 == 0)
-                    {
-                    	cout << "FATAL ERROR" << endl;
-                    	return;
-                    }
+					{
+					   cout << "FATAL ERROR" << endl;
+					   return;
+					}
 
-					planets.erase(planets.begin()+j);
-                    planets.erase(planets.begin()+i);
+							planets.erase(planets.begin()+j);
+					planets.erase(planets.begin()+i);
 
-                    Vector2f p1m1 = m1*d1;
-                    Vector2f p2m2 = m2*d2;
+					Vector2f p1m1 = m1*d1;
+					Vector2f p2m2 = m2*d2;
 
-                    Vector2f Pt = p1m1+p2m2;
-                    float Mt = m1+m2;
-                    Vector2f Df = Pt / Mt;
+					Vector2f Pt = p1m1+p2m2;
+					float Mt = m1+m2;
+					Vector2f Df = Pt / Mt;
 
-                    cout << "mass=" << m1 << '|' << m2 << endl
-                    	 << "pos=" << p1.x<<';'<<p1.y << '|' << p2.x<<';'<<p2.y << endl
-                    	 << "Df=" << Df.x << ';' << Df.y << endl;
+					Vector2f pos = (m1 >= m2 ? p1 : p2);
 
-                    Vector2f pos = (m1 >= m2 ? p1 : p2);
-
-                    planets.push_back(Body(pos, Mt, Df));
+					planets.push_back(Body(pos, Mt, Df));
 				}
 
 				planets[i].applyGravityOf(planets[j], delta_t);
@@ -82,10 +78,10 @@ void Universe::draw(RenderWindow& window)
 void Universe::eraseAt(const Vector2f& pos)
 {
 	for (unsigned int i = 0; i < planets.size(); i++)
-    {
-        if (planets[i].contains(Vector2f(pos.x, pos.y)))
-        {
-            planets.erase(planets.begin()+i);
-        }
-    }
+	{
+		if (planets[i].contains(Vector2f(pos.x, pos.y)))
+		{
+			planets.erase(planets.begin()+i);
+		}
+	}
 }
