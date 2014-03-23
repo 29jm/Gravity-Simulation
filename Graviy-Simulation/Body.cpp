@@ -33,8 +33,6 @@ Body::Body(Vector2f pos, int m, Vector2f dir)
 
 	shape.setRadius(radius);
 	shape.setFillColor(Color::Red);
-
-	cout << "New planet with radius " << radius << " at position (" << pos.x << ';' << pos.y << ")" << endl;
 }
 
 void Body::move(float dt)
@@ -45,12 +43,6 @@ void Body::move(float dt)
 void Body::applyGravityOf(const Body &b, float dt)
 {
     float r = getDistanceTo(b);
-
-    if (r <= 0)
-    {
-    	cout << "FATAL ERROR: distance <= 0" << endl;
-    	return;
-    }
 
     float F = (G*mass*b.mass) / (r*r);
 
