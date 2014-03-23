@@ -9,7 +9,7 @@
 #include "Body.hpp"
 
 #define G 9.82 // TODO: Get the right number
-#define DENSITY 100 // kg/m^3
+#define DENSITY 20 // kg/m^3
 
 using namespace sf;
 using namespace std;
