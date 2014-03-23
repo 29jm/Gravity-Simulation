@@ -1,6 +1,9 @@
 all: Universe Body main
 	clang++ -std=c++11 Universe.o Body.o main.o -lsfml-graphics -lsfml-window -lsfml-system -o gravity
 
+exec: all
+	./gravity
+
 Universe: Universe.cpp
 	clang++ -c -std=c++11 Universe.cpp -o Universe.o
 
