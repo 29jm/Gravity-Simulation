@@ -32,13 +32,7 @@ void Universe::move(float delta_t)
 					float m1(planets[i].mass), m2(planets[j].mass);
 					Vector2f d1(planets[i].direction), d2(planets[j].direction);
 
-					if (m1 == 0 || m2 == 0)
-					{
-					   cout << "FATAL ERROR" << endl;
-					   return;
-					}
-
-							planets.erase(planets.begin()+j);
+					planets.erase(planets.begin()+j);
 					planets.erase(planets.begin()+i);
 
 					Vector2f p1m1 = m1*d1;
