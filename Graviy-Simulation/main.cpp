@@ -26,9 +26,13 @@ int main()
 	Clock timer;
 	float delta_t(0);
 	int mass(MASS);
+	Vector2f mousePosition;
 	bool running = true;
 	bool is_placing = false;
+	bool is_moving = false;
 	bool trace = false;
+	bool control = false;
+	bool shift = false;
 
 	// Some inits
 	line[0].color = Color::Blue;
@@ -92,6 +96,28 @@ int main()
                     is_placing = false;
                     break;
 
+                case Keyboard::LControl:
+                	control = true;
+                	break;
+
+                case Keyboard::LShift:
+                	shift = true;
+                	break;
+				default:
+					break;
+				}
+			}
+
+			if (evt.type == Event::KeyReleased)
+			{
+				switch (evt.key.code)
+				{
+				case Keyboard::LControl:
+					control = false;
+
+				case Keyboard::LShift:
+					shift = false;
+
 				default:
 					break;
 				}
@@ -99,9 +125,13 @@ int main()
 
 			if (evt.type == Event::MouseButtonPressed)
 			{
-                if (evt.key.shift)
+                if (shift)
                 {
                     universe.eraseAt(Vector2f(evt.mouseButton.x, evt.mouseButton.y));
+                }
+                else if (control)
+                {
+                	is_moving = true;
                 }
                 else
                 {
@@ -122,12 +152,23 @@ int main()
 				{
 					line[1].position = window.mapPixelToCoords(Vector2i(evt.mouseMove.x, evt.mouseMove.y));
 				}
+
+				if (is_moving)
+				{
+					cout << "move: " << evt.mouseMove.x << ';' << evt.mouseMove.y << endl;
+					view.move(mousePosition - Vector2f(evt.mouseMove.x, evt.mouseMove.y));
+					window.setView(view);
+				}
+
+				mousePosition = Vector2f(evt.mouseMove.x, evt.mouseMove.y);
 			}
 
 			if (evt.type == Event::MouseButtonReleased)
 			{
 				if (is_placing)
 				{
+					is_placing = false;
+
 					Vector2f direction = window.mapPixelToCoords(Vector2i(line[1].position - line[0].position));
 					cout << "direction: " << direction.x << ';' << direction.y << endl;
 					Body p(Vector2f(0, 0), mass, direction);
@@ -139,7 +180,10 @@ int main()
 					universe.addPlanet(p);
 				}
 
-				is_placing = false;
+				if (is_moving)
+				{
+					is_moving = false;
+				}
 			}
 		}
 
