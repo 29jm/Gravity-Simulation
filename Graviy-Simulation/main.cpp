@@ -159,7 +159,6 @@ int main()
 
 				if (is_moving)
 				{
-					cout << "move: " << evt.mouseMove.x << ';' << evt.mouseMove.y << endl;
 					view.move(mousePosition - Vector2f(evt.mouseMove.x, evt.mouseMove.y));
 					window.setView(view);
 				}
@@ -174,13 +173,11 @@ int main()
 					is_placing = false;
 
 					Vector2f direction = end - start;
-					cout << "direction: " << direction.x << ';' << direction.y << endl;
 
 					Body p(Vector2f(0, 0), mass, direction);
 
-					Vector2f position = Vector2f(line[0].position.x,
-							line[0].position.y);
-					p.position = position;
+					p.position = Vector2f(line[0].position.x,
+							line[0].position.y);;
 
 					universe.addPlanet(p);
 				}
