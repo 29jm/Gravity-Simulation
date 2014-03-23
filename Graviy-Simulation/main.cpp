@@ -6,7 +6,7 @@
 #include "Universe.hpp"
 #include "Body.hpp"
 
-#define MASS 1
+#define MASS 10
 #define BASE_LINE 2
 
 using namespace sf;
@@ -15,6 +15,7 @@ using namespace std;
 int main()
 {
 	RenderWindow window(VideoMode(800, 600), "Gravity Simulation by Johan");
+	View view(FloatRect(0, 0, 400, 300));
 
 	// Drawable elements
 	Universe universe;
@@ -33,6 +34,7 @@ int main()
 	line[0].color = Color::Blue;
 	line[1].color = Color::Green;
 	base_line.setFillColor(Color::Blue);
+	window.setView(view);
 
 	while (running)
 	{
@@ -51,33 +53,45 @@ int main()
 					running = false;
 				}
 
-				switch (evt.key.code) // TODO: +- mass; toggle "clear()"; pause;
+				switch (evt.key.code)
 				{
                 case Keyboard::PageUp:
 				case Keyboard::Add:
-					mass += 100;
-					cout << "Mass is now " << mass << endl;
-					break;
-                case Keyboard::PageDown:
-				case Keyboard::Subtract:
-					mass = (mass > 0 ? mass - 100 : 100);
+					mass *= 10;
 					if (mass < 0)
 					{
-						mass = 1;
+						mass = MASS;
 					}
 					cout << "Mass is now " << mass << endl;
 					break;
+
+                case Keyboard::PageDown:
+				case Keyboard::Subtract:
+					if (mass > 10)
+					{
+						mass /= 10;
+					}
+					else
+					{
+						mass = MASS;
+					}
+					cout << "Mass is now " << mass << endl;
+					break;
+
 				case Keyboard::T:
 					trace = !trace;
-					cout << "Trace mode activated" << endl;
+					cout << "Trace mode " << (trace ? "enabled" : "disabled") << endl;
 					break;
+
 				case Keyboard::Space:
                     if (is_placing)
                     {
                         cout << "Planet placement cancelled" << endl;
                     }
+      
                     is_placing = false;
                     break;
+
 				default:
 					break;
 				}
@@ -93,9 +107,12 @@ int main()
                 {
                     is_placing = true;
 
-                    line[0].position = Vector2f(evt.mouseButton.x, evt.mouseButton.y);
-                    line[1].position = Vector2f(evt.mouseButton.x, evt.mouseButton.y);
-                    base_line.setPosition(evt.mouseButton.x - BASE_LINE, evt.mouseButton.y - BASE_LINE);
+                    line[0].position = window.mapPixelToCoords(Vector2i(evt.mouseButton.x, evt.mouseButton.y));
+                    line[1].position = window.mapPixelToCoords(Vector2i(evt.mouseButton.x, evt.mouseButton.y));
+
+                    Vector2f base = 
+                    	window.mapPixelToCoords(Vector2i(evt.mouseButton.x - BASE_LINE, evt.mouseButton.y - BASE_LINE));
+                    base_line.setPosition(base);
                 }
             }
 
@@ -103,7 +120,7 @@ int main()
 			{
 				if (is_placing)
 				{
-					line[1].position = Vector2f(evt.mouseMove.x, evt.mouseMove.y);
+					line[1].position = window.mapPixelToCoords(Vector2i(evt.mouseMove.x, evt.mouseMove.y));
 				}
 			}
 
@@ -111,10 +128,15 @@ int main()
 			{
 				if (is_placing)
 				{
-					Vector2i position(line[0].position.x - MASS,
-							line[0].position.y - MASS);
+					Vector2f direction = window.mapPixelToCoords(Vector2i(line[1].position - line[0].position));
+					cout << "direction: " << direction.x << ';' << direction.y << endl;
+					Body p(Vector2f(0, 0), mass, direction);
 
-					universe.addPlanet(position, mass, line[1].position - line[0].position);
+					Vector2f position = Vector2f(line[0].position.x,
+							line[0].position.y);
+					p.position = position;
+
+					universe.addPlanet(p);
 				}
 
 				is_placing = false;
