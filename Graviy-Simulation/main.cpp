@@ -14,8 +14,9 @@ using namespace std;
 
 int main()
 {
-	RenderWindow window(VideoMode(800, 600), "Gravity Simulation by Johan");
-	View view(FloatRect(0, 0, 400, 300));
+	unsigned int width(800), height(600);
+	RenderWindow window(VideoMode(width, height), "Gravity Simulation by Johan");
+	View view(FloatRect(0, 0, width, height));
 
 	// Drawable elements
 	Universe universe;
@@ -49,6 +50,12 @@ int main()
 			if (evt.type == Event::Closed)
 			{
 				running = false;
+			}
+
+			if (evt.type == Event::Resized)
+			{
+				view.setSize(evt.size.width, evt.size.height);
+				window.setView(view);
 			}
 
 			if (evt.type == Event::KeyPressed)
@@ -186,6 +193,13 @@ int main()
 				{
 					is_moving = false;
 				}
+			}
+
+			if (evt.type == Event::MouseWheelMoved)
+			{
+				float factor = (evt.mouseWheel.delta < 1 ? 1.10 : 0.90);
+				view.zoom(factor);
+				window.setView(view);
 			}
 		}
 
