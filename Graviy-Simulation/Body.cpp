@@ -23,8 +23,11 @@ Body::Body(Vector2f pos, int m, Vector2f dir)
 	}
 
 	// Radius
+	radius = log(mass);
+	/*
 	float volume = mass / DENSITY;
 	radius = cbrt((3*volume)/(4*M_PI));
+	*/
 	
 	if (radius < 1)
 	{
