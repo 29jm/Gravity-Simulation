@@ -4,6 +4,9 @@ all: Universe Body main
 exec: all
 	./gravity
 
+clean:
+	rm *.o gravity
+
 Universe: Universe.cpp
 	clang++ -c -std=c++11 Universe.cpp -o Universe.o
 
