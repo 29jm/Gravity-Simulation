@@ -8,7 +8,7 @@
 
 #include "Body.hpp"
 
-#define G 9.82 // TODO: Get the right number
+#define G 15 // TODO: Get the right number
 #define DENSITY 20 // kg/m^3
 
 using namespace sf;
@@ -45,33 +45,34 @@ void Body::move(float dt)
 
 void Body::applyGravityOf(const Body &b, float dt)
 {
-    float r = getDistanceTo(b);
+	float r = getDistanceTo(b);
 
-    if (r <= 0)
-    {
-    	return;
-    }
+	if (r <= 0)
+	{
+		cout << "Gravity failed" << endl;
+		return;
+	}
 
-    float F = (G*mass*b.mass) / (r*r);
+	float F = (G*mass*b.mass) / (r*r);
 
-    // Make the force proportional to the mass
-    F /= mass;
+	// Make the force proportional to the mass
+	F /= mass;
 
 	// Get the unit vector to the other body
 	Vector2f to_Body(b.position - position);
 	to_Body = to_Body / r;
 
-    // Apply the force in the direction of the other body
-    direction += (to_Body * F) * dt;
+	// Apply the force in the direction of the other body
+	direction += (to_Body * F) * dt;
 }
 
 float Body::getDistanceTo(const Body &p)
 {
-    Vector2f a = position;
+	Vector2f a = position;
 	Vector2f b = p.position;
-    Vector2f c = b - a;
+	Vector2f c = b - a;
 
-    return sqrt(c.x*c.x + c.y * c.y);
+	return sqrt(c.x*c.x + c.y * c.y);
 }
 
 void Body::draw(RenderWindow &window)
@@ -95,14 +96,17 @@ bool Body::collideWith(const Body &p)
 
 bool Body::contains(const Vector2f &point)
 {
-    Vector2f a = position;
-    Vector2f b = point;
-    Vector2f c = b - a;
+	Vector2f a = position;
+	a.x += radius;
+	a.y += radius;
 
-    if ((c.x*c.x + c.y * c.y) <= shape.getRadius()*shape.getRadius())
-    {
-        return true;
-    }
+	Vector2f b = point;
+	Vector2f c = b - a;
 
-    return false;
+	if ((c.x*c.x + c.y * c.y) <= shape.getRadius()*shape.getRadius())
+	{
+		return true;
+	}
+
+	return false;
 }
