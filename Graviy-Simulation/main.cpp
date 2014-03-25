@@ -1,5 +1,6 @@
 #include <vector>
 #include <iostream>
+#include <random>
 
 #include <SFML/Graphics.hpp>
 
@@ -8,9 +9,17 @@
 
 #define MASS 10
 #define BASE_LINE 2
+#define CLUSTER_RADIUS 150
+#define CLUSTER_NUMBER 1000
+
+#ifdef _WIN32
+	#define M_PI 3.14
+#endif
 
 using namespace sf;
 using namespace std;
+
+float gen_random_float();
 
 int main()
 {
@@ -37,6 +46,7 @@ int main()
 	bool shift = false;
 
 	// Some inits
+	srand(time(0));
 	line[0].color = Color::Blue;
 	line[1].color = Color::Green;
 	base_line.setFillColor(Color::Blue);
@@ -67,7 +77,7 @@ int main()
 
 				switch (evt.key.code)
 				{
-                case Keyboard::PageUp:
+				case Keyboard::PageUp:
 				case Keyboard::Add:
 					mass *= 10;
 					if (mass < 0)
@@ -77,7 +87,7 @@ int main()
 					cout << "Mass is now " << mass << endl;
 					break;
 
-                case Keyboard::PageDown:
+				case Keyboard::PageDown:
 				case Keyboard::Subtract:
 					if (mass > 10)
 					{
@@ -96,21 +106,46 @@ int main()
 					break;
 
 				case Keyboard::Space:
-                    if (is_placing)
-                    {
-                        cout << "Planet placement cancelled" << endl;
-                    }
-      
-                    is_placing = false;
-                    break;
+					if (is_placing)
+					{
+						cout << "Planet placement cancelled" << endl;
+					}
+	  
+					is_placing = false;
+					break;
 
-                case Keyboard::LControl:
-                	control = true;
-                	break;
+				case Keyboard::LControl:
+					control = true;
+					break;
 
-                case Keyboard::LShift:
-                	shift = true;
-                	break;
+				case Keyboard::LShift:
+					shift = true;
+					break;
+
+				case Keyboard::C:
+					{
+						Vector2f pos_circle(view.getCenter());
+
+						for (int i = 0; i < CLUSTER_NUMBER; i++)
+						{
+							float a(gen_random_float());
+							float b(gen_random_float());
+
+							if (b > a)
+							{
+								float t(a);
+								a = b;
+								b = t;
+							}
+
+							Vector2f pos_p(b*CLUSTER_RADIUS*cos(2*M_PI*a/b), b*CLUSTER_RADIUS*sin(2*M_PI*a/b));
+							pos_p += pos_circle;
+
+							universe.addPlanet(pos_p, 1, Vector2f());
+						}
+					}
+					break;
+
 				default:
 					break;
 				}
@@ -133,28 +168,28 @@ int main()
 
 			if (evt.type == Event::MouseButtonPressed)
 			{
-                if (shift)
-                {
-                    universe.eraseAt(Vector2f(evt.mouseButton.x, evt.mouseButton.y));
-                }
-                else if (control)
-                {
-                	is_moving = true;
-                }
-                else
-                {
-                    is_placing = true;
+				if (shift)
+				{
+					universe.eraseAt(Vector2f(evt.mouseButton.x, evt.mouseButton.y));
+				}
+				else if (control)
+				{
+					is_moving = true;
+				}
+				else
+				{
+					is_placing = true;
 
-                    line[0].position = window.mapPixelToCoords(Vector2i(evt.mouseButton.x, evt.mouseButton.y));
-                    line[1].position = line[0].position;
-                    start = Vector2f(evt.mouseButton.x, evt.mouseButton.y);
-                    end = start;
+					line[0].position = window.mapPixelToCoords(Vector2i(evt.mouseButton.x, evt.mouseButton.y));
+					line[1].position = line[0].position;
+					start = Vector2f(evt.mouseButton.x, evt.mouseButton.y);
+					end = start;
 
-                    Vector2f base = 
-                    	window.mapPixelToCoords(Vector2i(evt.mouseButton.x - BASE_LINE, evt.mouseButton.y - BASE_LINE));
-                    base_line.setPosition(base);
-                }
-            }
+					Vector2f base = 
+						window.mapPixelToCoords(Vector2i(evt.mouseButton.x - BASE_LINE, evt.mouseButton.y - BASE_LINE));
+					base_line.setPosition(base);
+				}
+			}
 
 			if (evt.type == Event::MouseMoved)
 			{
@@ -228,4 +263,14 @@ int main()
 	}
 
 	return 0;
+}
+
+float gen_random_float()
+{
+	static mt19937 engine(time(nullptr));
+	static uniform_real_distribution<float> distribution(0.0f, 1.0f);
+
+	static auto gen = std::bind(distribution, engine);
+
+	return gen();
 }
