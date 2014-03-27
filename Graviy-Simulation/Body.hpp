@@ -6,7 +6,7 @@
 class Body
 {
 public:
-    Body(sf::Vector2f pos, int m, sf::Vector2f dir);
+    Body(sf::Vector2f pos, uint64_t m, sf::Vector2f dir);
 
 	void move(float dt);
 	void applyGravityOf(const Body& b, float dt);
@@ -16,7 +16,7 @@ public:
 
     sf::Vector2f position;
     sf::Vector2f direction;
-    int mass;
+    uint64_t mass;
     float radius;
 
 private:

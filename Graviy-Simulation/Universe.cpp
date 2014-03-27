@@ -3,7 +3,7 @@
 using namespace sf;
 using namespace std;
 
-void Universe::addPlanet(Vector2f position, float m, Vector2f dir)
+void Universe::addPlanet(Vector2f position, uint64_t m, Vector2f dir)
 {
 	planets.push_back(Body(position, m, dir));
 }
@@ -37,7 +37,7 @@ void Universe::move(float delta_t)
 
 					Vector2f p1m1 = m1*d1;
 					Vector2f p2m2 = m2*d2;
-
+					
 					Vector2f Pt = p1m1+p2m2;
 					float Mt = m1+m2;
 					Vector2f Df = Pt / Mt;

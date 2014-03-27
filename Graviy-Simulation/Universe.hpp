@@ -8,7 +8,7 @@
 class Universe
 {
 public:
-	void addPlanet(sf::Vector2f position, float m, sf::Vector2f dir);
+	void addPlanet(sf::Vector2f position, uint64_t m, sf::Vector2f dir);
 	void addPlanet(Body p);
 
 	void move(float delta_t);

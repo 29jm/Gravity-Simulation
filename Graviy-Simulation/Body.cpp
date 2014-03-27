@@ -14,7 +14,7 @@
 using namespace sf;
 using namespace std;
 
-Body::Body(Vector2f pos, int m, Vector2f dir)
+Body::Body(Vector2f pos, uint64_t m, Vector2f dir)
 	: position(pos), direction(dir), mass(m)
 {
 	if (mass <= 0)
@@ -23,19 +23,46 @@ Body::Body(Vector2f pos, int m, Vector2f dir)
 	}
 
 	// Radius
-	radius = log(mass);
-	/*
+	// radius = log(mass);
+	
 	float volume = mass / DENSITY;
 	radius = cbrt((3*volume)/(4*M_PI));
-	*/
+	
 	
 	if (radius < 1)
 	{
 		radius = 1;
 	}
 
+	Color color(255, 255, 255);
+
+	int blue = mass*255 / 50;
+	//cout << "blue=" << blue << endl;
+	color.b = 255 - (blue <= 255 ? blue : 255);
+
+	if (mass > 10000)
+	{
+		int red = mass*80 / 20000;
+		color.r = 255 - (red <= 80 ? red : 80);
+
+		int green = mass*180 / 20000;
+		color.g = 255 - (green <= 180 ? green : 180);
+	}
+
+	// min values : 175 ; 75 ; 0
+
+	if (mass > 1000000)
+	{
+		int red = mass*80 / 1000000;
+		color.r += (red <= 80 ? red : 80);
+
+		int green = mass*75 / 1000000;
+		color.g -= (green <= 75 ? green : 75);
+		cout << "green=" << green << endl;
+	}
+
 	shape.setRadius(radius);
-	shape.setFillColor(Color::Red);
+	shape.setFillColor(color);
 }
 
 void Body::move(float dt)
@@ -49,7 +76,6 @@ void Body::applyGravityOf(const Body &b, float dt)
 
 	if (r <= 0)
 	{
-		cout << "Gravity failed" << endl;
 		return;
 	}
 
