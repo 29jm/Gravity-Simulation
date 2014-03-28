@@ -8,8 +8,8 @@
 
 #include "Body.hpp"
 
-#define G 15 // TODO: Get the right number
-#define DENSITY 20 // kg/m^3
+#define G 20 // TODO: Get the right number
+#define DENSITY 100 // kg/m^3
 
 using namespace sf;
 using namespace std;
@@ -23,42 +23,29 @@ Body::Body(Vector2f pos, uint64_t m, Vector2f dir)
 	}
 
 	// Radius
-	// radius = log(mass);
-	
 	float volume = mass / DENSITY;
 	radius = cbrt((3*volume)/(4*M_PI));
-	
 	
 	if (radius < 1)
 	{
 		radius = 1;
 	}
 
-	Color color(255, 255, 255);
+	Color color(Color::White);
+	Color clear_yellow(212, 193, 106);
+	Color brown(175, 75, 0);
 
-	int blue = mass*255 / 50;
-	//cout << "blue=" << blue << endl;
-	color.b = 255 - (blue <= 255 ? blue : 255);
-
-	if (mass > 10000)
+	if (mass <= 10000)
 	{
-		int red = mass*80 / 20000;
-		color.r = 255 - (red <= 80 ? red : 80);
-
-		int green = mass*180 / 20000;
-		color.g = 255 - (green <= 180 ? green : 180);
+		color = interpolate(Color::White, clear_yellow, mass / 10000.0f);
 	}
-
-	// min values : 175 ; 75 ; 0
-
-	if (mass > 1000000)
+	else if (mass <= 100000)
 	{
-		int red = mass*80 / 1000000;
-		color.r += (red <= 80 ? red : 80);
-
-		int green = mass*75 / 1000000;
-		color.g -= (green <= 75 ? green : 75);
-		cout << "green=" << green << endl;
+		color = interpolate(clear_yellow, brown, mass / 100000.0f);
+	}
+	else
+	{
+		color = interpolate(brown, Color::Red, mass  / 1000000.0f);
 	}
 
 	shape.setRadius(radius);
@@ -135,4 +122,19 @@ bool Body::contains(const Vector2f &point)
 	}
 
 	return false;
+}
+
+// Handy helper fonctions
+
+/*
+ *	ratio is a number between 0.0f and 1.0f
+ */
+Color interpolate(Color a, Color b, float ratio)
+{
+	Color c;
+	c.r = (b.r-a.r) * ratio + a.r;
+	c.g = (b.g-a.g) * ratio + a.g;
+	c.b = (b.b-a.b) * ratio + a.b;
+
+	return c;
 }
