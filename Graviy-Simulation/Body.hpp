@@ -25,4 +25,6 @@ private:
 	sf::CircleShape shape;
 };
 
+sf::Color interpolate(sf::Color a, sf::Color b, float delta_t);
+
 #endif // BODY_HPP
