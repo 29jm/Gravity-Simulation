@@ -13,6 +13,27 @@ void Universe::addPlanet(Body p)
 	planets.push_back(p);
 }
 
+void Universe::createProtodisk(const int number, const int radius, const int mass, const sf::Vector2f& position)
+{
+	for (int i = 0; i < number; i++)
+	{
+		float a = distribution(rng);
+		float b = distribution(rng);
+
+		if (b > a)
+		{
+			float temp(a);
+			a = b;
+			b = temp;
+		}
+
+		Vector2f pos(b*radius*cos(2*M_PI*a/b), b*radius*sin(2*M_PI*a/b));
+		pos += position;
+
+		planets.push_back( Body(pos, mass, Vector2f()) );
+	}
+}
+
 void Universe::move(float delta_t)
 {
 	if (planets.size() < 1)
@@ -27,24 +48,11 @@ void Universe::move(float delta_t)
 			if (i != j)
 			{
 				if (planets[i].collideWith(planets[j]))
-				{
-					Vector2f p1(planets[i].position), p2(planets[j].position);
-					float m1(planets[i].mass), m2(planets[j].mass);
-					Vector2f d1(planets[i].direction), d2(planets[j].direction);
+				{					
+					planets.push_back(combinedPlanets(planets[i], planets[j]));
 
 					planets.erase(planets.begin()+j);
 					planets.erase(planets.begin()+i);
-
-					Vector2f p1m1 = m1*d1;
-					Vector2f p2m2 = m2*d2;
-					
-					Vector2f Pt = p1m1+p2m2;
-					float Mt = m1+m2;
-					Vector2f Df = Pt / Mt;
-
-					Vector2f pos = (m1 >= m2 ? p1 : p2);
-
-					planets.push_back(Body(pos, Mt, Df));
 				}
 
 				planets[i].applyGravityOf(planets[j], delta_t);
@@ -75,4 +83,18 @@ void Universe::eraseAt(const Vector2f& pos)
 			planets.erase(planets.begin()+i);
 		}
 	}
+}
+
+Body combinedPlanets(const Body& a, const Body& b)
+{
+	Vector2f p1m1 = float(a.mass)*a.direction;
+	Vector2f p2m2 = float(b.mass)*b.direction;
+	
+	uint64_t total_mass(a.mass+b.mass);
+	Vector2f direction = (p1m1+p2m2) / float(total_mass);
+
+	Vector2f pos = (a.mass >= b.mass ? a.position : 
+									   b.position);
+
+	return Body(pos, total_mass, direction);
 }

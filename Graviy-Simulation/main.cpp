@@ -9,7 +9,7 @@
 
 #define MASS 10
 #define BASE_LINE 2
-#define CLUSTER_RADIUS 150
+#define CLUSTER_RADIUS 1000
 #define CLUSTER_NUMBER 1000
 
 #ifdef _WIN32
@@ -123,27 +123,7 @@ int main()
 					break;
 
 				case Keyboard::C:
-					{
-						Vector2f pos_circle(view.getCenter());
-
-						for (int i = 0; i < CLUSTER_NUMBER; i++)
-						{
-							float a(gen_random_float());
-							float b(gen_random_float());
-
-							if (b > a)
-							{
-								float t(a);
-								a = b;
-								b = t;
-							}
-
-							Vector2f pos_p(b*CLUSTER_RADIUS*cos(2*M_PI*a/b), b*CLUSTER_RADIUS*sin(2*M_PI*a/b));
-							pos_p += pos_circle;
-
-							universe.addPlanet(pos_p, 1, Vector2f());
-						}
-					}
+					universe.createProtodisk(10, 40, 1, view.getCenter());
 					break;
 
 				default:
