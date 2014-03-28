@@ -22,6 +22,8 @@ Body::Body(Vector2f pos, uint64_t m, Vector2f dir)
 		cout << "FATAL ERROR: MASS <= 0" << endl;
 	}
 
+	cout << "MASS=" << mass << endl;
+
 	// Radius
 	float volume = mass / DENSITY;
 	radius = cbrt((3*volume)/(4*M_PI));
@@ -42,6 +44,10 @@ Body::Body(Vector2f pos, uint64_t m, Vector2f dir)
 	else if (mass <= 100000)
 	{
 		color = interpolate(clear_yellow, brown, mass / 100000.0f);
+	}
+	else if (mass >= 1000000)
+	{
+		color = Color::Red;
 	}
 	else
 	{
@@ -81,9 +87,7 @@ void Body::applyGravityOf(const Body &b, float dt)
 
 float Body::getDistanceTo(const Body &p)
 {
-	Vector2f a = position;
-	Vector2f b = p.position;
-	Vector2f c = b - a;
+	Vector2f c = p.position - position;
 
 	return sqrt(c.x*c.x + c.y * c.y);
 }
@@ -97,14 +101,18 @@ void Body::draw(RenderWindow &window)
 bool Body::collideWith(const Body &p)
 {
 	Vector2f a = position;
+	// a.x += radius;
+	// a.y += radius;
+
 	Vector2f b = p.position;
+	// b.x += p.radius;
+	// b.y += p.radius;
+
 	float d = (a.x-b.x)*(a.x-b.x) + (a.y-b.y)*(a.y-b.y);
 
-	float r1 = shape.getRadius();
-	float r2 = p.shape.getRadius();
-	if (d > (r1+r2)*(r1+r2))
-		return false;
-	return true;
+	if (d <= (radius+p.radius)*(radius+p.radius))
+		return true;
+	return false;
 }
 
 bool Body::contains(const Vector2f &point)
@@ -116,7 +124,7 @@ bool Body::contains(const Vector2f &point)
 	Vector2f b = point;
 	Vector2f c = b - a;
 
-	if ((c.x*c.x + c.y * c.y) <= shape.getRadius()*shape.getRadius())
+	if ((c.x*c.x + c.y * c.y) <= radius*radius)
 	{
 		return true;
 	}
