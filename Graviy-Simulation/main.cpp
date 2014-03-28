@@ -9,8 +9,9 @@
 
 #define MASS 10
 #define BASE_LINE 2
-#define CLUSTER_RADIUS 1000
-#define CLUSTER_NUMBER 1000
+#define CLUSTER_RADIUS 300
+#define CLUSTER_NUMBER 750
+#define CLUSTER_MASS 1000
 
 #ifdef _WIN32
 	#define M_PI 3.14
@@ -46,7 +47,6 @@ int main()
 	bool shift = false;
 
 	// Some inits
-	srand(time(0));
 	line[0].color = Color::Blue;
 	line[1].color = Color::Green;
 	base_line.setFillColor(Color::Blue);
@@ -123,7 +123,7 @@ int main()
 					break;
 
 				case Keyboard::C:
-					universe.createProtodisk(10, 40, 1, view.getCenter());
+					universe.createProtodisk(CLUSTER_NUMBER, CLUSTER_RADIUS, CLUSTER_MASS, view.getCenter());
 					break;
 
 				default:
