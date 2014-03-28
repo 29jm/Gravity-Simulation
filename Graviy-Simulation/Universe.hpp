@@ -32,4 +32,4 @@ private:
 
 Body combinedPlanets(const Body& a, const Body& b);
 
-#endif
+#endif // UNIVERSE_HPP
