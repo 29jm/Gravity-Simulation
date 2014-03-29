@@ -20,7 +20,7 @@ public:
     float radius;
 
 private:
-	float getDistanceTo(const Body& p);
+	float getDistanceTo(const Body& b);
 
 	sf::CircleShape shape;
 };
