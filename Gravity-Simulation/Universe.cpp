@@ -3,13 +3,20 @@
 using namespace sf;
 using namespace std;
 
+Universe::Universe()
+	: show_path(false)
+{
+
+}
+
 void Universe::addPlanet(Vector2f position, uint64_t m, Vector2f dir)
 {
-	planets.push_back(Body(position, m, dir));
+	planets.push_back(Body(position, m, dir, show_path));
 }
 
 void Universe::addPlanet(Body p)
 {
+	p.setPath(show_path);
 	planets.push_back(p);
 }
 
@@ -30,7 +37,18 @@ void Universe::createProtodisk(const int number, const int radius, const int mas
 		Vector2f pos(b*radius*cos(2*M_PI*a/b), b*radius*sin(2*M_PI*a/b));
 		pos += position;
 
-		planets.push_back( Body(pos, mass, Vector2f()) );
+		Body p(pos, mass, Vector2f(), show_path);
+		planets.push_back(p);
+	}
+}
+
+void Universe::togglePath()
+{
+	show_path = !show_path;
+
+	for (Body& b : planets)
+	{
+		b.setPath(show_path);
 	}
 }
 
@@ -49,7 +67,9 @@ void Universe::move(float delta_t)
 			{
 				if (planets[i].collideWith(planets[j]))
 				{
-					planets.push_back(combinedPlanets(planets[i], planets[j]));
+					Body p = combinedPlanets(planets[i], planets[j]);
+					p.setPath(show_path);
+					planets.push_back(p);
 
 					planets.erase(planets.begin()+j);
 					planets.erase(planets.begin()+i);
@@ -101,5 +121,5 @@ Body combinedPlanets(const Body& a, const Body& b)
 	Vector2f pos = (a.mass >= b.mass ? a.position : 
 									   b.position);
 
-	return Body(pos, total_mass, direction);
+	return Body(pos, total_mass, direction, false);
 }

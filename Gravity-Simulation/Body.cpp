@@ -14,8 +14,8 @@
 using namespace sf;
 using namespace std;
 
-Body::Body(Vector2f pos, uint64_t m, Vector2f dir)
-	: position(pos), direction(dir), mass(m), path(LinesStrip)
+Body::Body(Vector2f pos, uint64_t m, Vector2f dir, bool with_path)
+	: position(pos), direction(dir), mass(m), path(LinesStrip), show_path(with_path)
 {
 	if (mass <= 0)
 	{
@@ -61,8 +61,12 @@ Body::Body(Vector2f pos, uint64_t m, Vector2f dir)
 void Body::move(float dt)
 {
 	position += direction * dt;
-	Vector2f center(Vector2f(position.x+radius, position.y+radius)); 
-	path.append(Vertex(center, shape.getFillColor()));
+		
+	if (show_path)
+	{
+		Vector2f center(Vector2f(position.x+radius, position.y+radius)); 
+		path.append(Vertex(center, shape.getFillColor()));
+	}
 }
 
 void Body::applyGravityOf(const Body &b, float dt)
@@ -103,7 +107,11 @@ void Body::draw(RenderWindow &window)
 {
 	shape.setPosition(position);
 	window.draw(shape);
-	window.draw(path);
+	
+	if (show_path)
+	{
+		window.draw(path);
+	}
 }
 
 bool Body::collideWith(const Body &p)
@@ -128,6 +136,16 @@ bool Body::contains(const Vector2f &point)
 	Vector2f center(position.x+radius, position.y+radius);
 	return (point.x-center.x)*(point.x-center.x)
 		 + (point.y-center.y)*(point.y-center.y) <= radius*radius;
+}
+
+void Body::setPath(bool state)
+{
+	show_path = state;
+
+	if (!show_path)
+	{
+		path.clear();
+	}
 }
 
 // Handy helper fonctions

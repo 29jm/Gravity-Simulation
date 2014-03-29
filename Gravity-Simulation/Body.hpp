@@ -6,18 +6,20 @@
 class Body
 {
 public:
-    Body(sf::Vector2f pos, uint64_t m, sf::Vector2f dir);
+    Body(sf::Vector2f pos, uint64_t m, sf::Vector2f dir, bool with_path);
 
 	void move(float dt);
 	void applyGravityOf(const Body& b, float dt);
 	void draw(sf::RenderWindow& window);
     bool collideWith(const Body& p);
     bool contains(const sf::Vector2f& point);
+    void setPath(bool state);
 
     sf::Vector2f position;
     sf::Vector2f direction;
     uint64_t mass;
     float radius;
+    bool show_path;
 
 private:
 	float getDistanceTo(const Body& b);

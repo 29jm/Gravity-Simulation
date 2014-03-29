@@ -14,9 +14,12 @@
 class Universe
 {
 public:
+	Universe();
+
 	void addPlanet(sf::Vector2f position, uint64_t m, sf::Vector2f dir);
 	void addPlanet(Body p);
 	void createProtodisk(const int number, const int radius, const int mass, const sf::Vector2f& position);
+	void togglePath();
 
 	void move(float delta_t);
 	void draw(sf::RenderWindow& window);
@@ -25,6 +28,7 @@ public:
 
 private:
 	std::vector<Body> planets;
+	bool show_path;
 
 	// Protodisk stuff
 	std::mt19937 rng;
