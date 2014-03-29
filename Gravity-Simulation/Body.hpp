@@ -23,6 +23,7 @@ private:
 	float getDistanceTo(const Body& b);
 
 	sf::CircleShape shape;
+    sf::VertexArray path;
 };
 
 sf::Color interpolate(sf::Color a, sf::Color b, float delta_t);

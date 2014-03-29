@@ -15,7 +15,7 @@ using namespace sf;
 using namespace std;
 
 Body::Body(Vector2f pos, uint64_t m, Vector2f dir)
-	: position(pos), direction(dir), mass(m)
+	: position(pos), direction(dir), mass(m), path(LinesStrip)
 {
 	if (mass <= 0)
 	{
@@ -51,7 +51,7 @@ Body::Body(Vector2f pos, uint64_t m, Vector2f dir)
 	}
 	else
 	{
-		color = interpolate(brown, Color::Red, mass  / 1000000.0f);
+		color = interpolate(brown, Color::Red, mass / 1000000.0f);
 	}
 
 	shape.setRadius(radius);
@@ -61,6 +61,8 @@ Body::Body(Vector2f pos, uint64_t m, Vector2f dir)
 void Body::move(float dt)
 {
 	position += direction * dt;
+	Vector2f center(Vector2f(position.x+radius, position.y+radius)); 
+	path.append(Vertex(center, shape.getFillColor()));
 }
 
 void Body::applyGravityOf(const Body &b, float dt)
@@ -101,6 +103,7 @@ void Body::draw(RenderWindow &window)
 {
 	shape.setPosition(position);
 	window.draw(shape);
+	window.draw(path);
 }
 
 bool Body::collideWith(const Body &p)
