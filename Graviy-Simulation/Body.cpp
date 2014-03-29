@@ -69,6 +69,7 @@ void Body::applyGravityOf(const Body &b, float dt)
 
 	if (r <= 0)
 	{
+		cout << "return" << endl;
 		return;
 	}
 
@@ -78,16 +79,20 @@ void Body::applyGravityOf(const Body &b, float dt)
 	F /= mass;
 
 	// Get the unit vector to the other body
-	Vector2f to_Body(b.position - position);
+	Vector2f target(b.position.x+b.radius, b.position.y+b.radius);
+	Vector2f center(position.x+radius, position.y+radius);
+	Vector2f to_Body(target - center);
 	to_Body = to_Body / r;
 
 	// Apply the force in the direction of the other body
 	direction += (to_Body * F) * dt;
 }
 
-float Body::getDistanceTo(const Body &p)
+float Body::getDistanceTo(const Body &b)
 {
-	Vector2f c = p.position - position;
+	Vector2f target(b.position.x+b.radius, b.position.y+b.radius);
+	Vector2f center(position.x+radius, position.y+radius);
+	Vector2f c = target - center;
 
 	return sqrt(c.x*c.x + c.y * c.y);
 }
@@ -101,12 +106,12 @@ void Body::draw(RenderWindow &window)
 bool Body::collideWith(const Body &p)
 {
 	Vector2f a = position;
-	// a.x += radius;
-	// a.y += radius;
+	a.x += radius;
+	a.y += radius;
 
 	Vector2f b = p.position;
-	// b.x += p.radius;
-	// b.y += p.radius;
+	b.x += p.radius;
+	b.y += p.radius;
 
 	float d = (a.x-b.x)*(a.x-b.x) + (a.y-b.y)*(a.y-b.y);
 
@@ -117,12 +122,7 @@ bool Body::collideWith(const Body &p)
 
 bool Body::contains(const Vector2f &point)
 {
-	Vector2f a = position;
-	a.x += radius;
-	a.y += radius;
-
-	Vector2f b = point;
-	Vector2f c = b - a;
+	Vector2f c = point - position;
 
 	if ((c.x*c.x + c.y * c.y) <= radius*radius)
 	{
