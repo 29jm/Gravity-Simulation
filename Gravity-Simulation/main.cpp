@@ -40,7 +40,6 @@ int main()
 	bool running = true;
 	bool is_placing = false;
 	bool is_moving = false;
-	bool trace = false;
 	bool control = false;
 	bool shift = false;
 
@@ -99,8 +98,7 @@ int main()
 					break;
 
 				case Keyboard::T:
-					trace = !trace;
-					cout << "Trace mode " << (trace ? "enabled" : "disabled") << endl;
+					universe.togglePath();
 					break;
 
 				case Keyboard::Space:
@@ -196,12 +194,8 @@ int main()
 
 					Vector2f direction = end - start;
 
-					Body p(Vector2f(0, 0), mass, direction);
-
-					p.position = Vector2f(line[0].position.x,
-							line[0].position.y);;
-
-					universe.addPlanet(p);
+					universe.addPlanet(Vector2f(line[0].position.x,
+							line[0].position.y), mass, direction);
 				}
 
 				if (is_moving)
@@ -218,13 +212,10 @@ int main()
 			}
 		}
 
-		if (!trace)
-		{
-			window.clear();
-		}
-
 		// Delta T
 		delta_t = timer.restart().asSeconds();
+
+		window.clear();
 
 		// Vector Preview - wow - need an arrow - hard
 		if (is_placing)
