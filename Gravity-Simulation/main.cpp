@@ -20,8 +20,6 @@
 using namespace sf;
 using namespace std;
 
-float gen_random_float();
-
 int main()
 {
 	unsigned int width(800), height(600);
@@ -243,14 +241,4 @@ int main()
 	}
 
 	return 0;
-}
-
-float gen_random_float()
-{
-	static mt19937 engine(time(nullptr));
-	static uniform_real_distribution<float> distribution(0.0f, 1.0f);
-
-	static auto gen = std::bind(distribution, engine);
-
-	return gen();
 }
