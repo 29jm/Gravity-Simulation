@@ -21,6 +21,7 @@ public:
 	void move(float delta_t);
 	void draw(sf::RenderWindow& window);
 	void eraseAt(const sf::Vector2f& pos);
+	void eraseAll();
 
 private:
 	std::vector<Body> planets;

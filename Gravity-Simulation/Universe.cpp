@@ -48,7 +48,7 @@ void Universe::move(float delta_t)
 			if (i != j)
 			{
 				if (planets[i].collideWith(planets[j]))
-				{					
+				{
 					planets.push_back(combinedPlanets(planets[i], planets[j]));
 
 					planets.erase(planets.begin()+j);
@@ -83,6 +83,11 @@ void Universe::eraseAt(const Vector2f& pos)
 			planets.erase(planets.begin()+i);
 		}
 	}
+}
+
+void Universe::eraseAll()
+{
+	planets.clear();
 }
 
 Body combinedPlanets(const Body& a, const Body& b)
