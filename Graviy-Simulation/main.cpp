@@ -150,7 +150,7 @@ int main()
 			{
 				if (shift)
 				{
-					universe.eraseAt(Vector2f(evt.mouseButton.x, evt.mouseButton.y));
+					universe.eraseAt(window.mapPixelToCoords(Vector2i(evt.mouseButton.x, evt.mouseButton.y)));
 				}
 				else if (control)
 				{
