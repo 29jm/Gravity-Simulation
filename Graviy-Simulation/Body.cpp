@@ -122,14 +122,9 @@ bool Body::collideWith(const Body &p)
 
 bool Body::contains(const Vector2f &point)
 {
-	Vector2f c = point - position;
-
-	if ((c.x*c.x + c.y * c.y) <= radius*radius)
-	{
-		return true;
-	}
-
-	return false;
+	Vector2f center(position.x+radius, position.y+radius);
+	return (point.x-center.x)*(point.x-center.x)
+		 + (point.y-center.y)*(point.y-center.y) <= radius*radius;
 }
 
 // Handy helper fonctions
