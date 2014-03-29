@@ -9,8 +9,8 @@
 
 #define MASS 10
 #define BASE_LINE 2
-#define CLUSTER_RADIUS 300
-#define CLUSTER_NUMBER 750
+#define CLUSTER_RADIUS 500
+#define CLUSTER_NUMBER 400
 #define CLUSTER_MASS 1000
 
 #ifdef _WIN32
@@ -124,6 +124,9 @@ int main()
 					universe.createProtodisk(CLUSTER_NUMBER, CLUSTER_RADIUS, CLUSTER_MASS, view.getCenter());
 					break;
 
+				case Keyboard::Delete:
+					universe.eraseAll();
+
 				default:
 					break;
 				}
@@ -163,9 +166,8 @@ int main()
 					start = Vector2f(evt.mouseButton.x, evt.mouseButton.y);
 					end = start;
 
-					Vector2f base = 
-						window.mapPixelToCoords(Vector2i(evt.mouseButton.x - BASE_LINE, evt.mouseButton.y - BASE_LINE));
-					base_line.setPosition(base);
+					Vector2f base_pos = Vector2f(line[0].position.x-BASE_LINE, line[0].position.y-BASE_LINE);
+					base_line.setPosition(base_pos);
 				}
 			}
 
