@@ -15,6 +15,7 @@ Features
 * The color of the planet is determined by its mass
 * Create a protodisk (press C)
 * Cross platform
+* Delete all planets with the Delete key
 
 More features to come
 
