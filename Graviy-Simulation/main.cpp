@@ -181,11 +181,11 @@ int main()
 
 				if (is_moving)
 				{
-					view.move(mousePosition - Vector2f(evt.mouseMove.x, evt.mouseMove.y));
+					view.move(mousePosition - window.mapPixelToCoords(Vector2i(evt.mouseMove.x, evt.mouseMove.y)));
 					window.setView(view);
 				}
 
-				mousePosition = Vector2f(evt.mouseMove.x, evt.mouseMove.y);
+				mousePosition = window.mapPixelToCoords(Vector2i(evt.mouseMove.x, evt.mouseMove.y));
 			}
 
 			if (evt.type == Event::MouseButtonReleased)
