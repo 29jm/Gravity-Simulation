@@ -22,6 +22,7 @@ void Universe::addPlanet(Body p)
 
 void Universe::createProtodisk(const int number, const int radius, const int mass, const sf::Vector2f& position)
 {
+	cout << "New protodisk: radius " << radius << endl;
 	for (int i = 0; i < number; i++)
 	{
 		float a = distribution(rng);
@@ -35,9 +36,20 @@ void Universe::createProtodisk(const int number, const int radius, const int mas
 		}
 
 		Vector2f pos(b*radius*cos(2*M_PI*a/b), b*radius*sin(2*M_PI*a/b));
+		float len = sqrt(pos.x*pos.x + pos.y*pos.y);
 		pos += position;
 
-		Body p(pos, mass, Vector2f(), show_path);
+		Vector2f dir = tangentThroughPoint(position, len, pos);
+		if (isnan(dir.x) || isnan(dir.y))
+		{
+			dir = Vector2f();
+		}
+
+		dir *= 100.0f;
+
+		cout << "dir=" << dir.x << ';' << dir.y << endl;
+
+		Body p(pos, mass, dir, show_path);
 		planets.push_back(p);
 	}
 }
@@ -104,7 +116,10 @@ void Universe::draw(RenderWindow& window)
 
 	if (show_path)
 	{
-		window.draw(old_paths);
+		for (VertexArray& path : old_paths)
+		{
+			window.draw(path);
+		}
 	}
 }
 
@@ -127,11 +142,7 @@ void Universe::eraseAll()
 
 void Universe::savePlanetPath(const Body& b)
 {
-	VertexArray path(b.getPath());
-	for (int i = 0; i < path.getVertexCount(); i++)
-	{
-		old_paths.append(path[i]);
-	}
+	old_paths.push_back(b.getPath());
 }
 
 // helper functions
@@ -147,4 +158,19 @@ Body combinedPlanets(const Body& a, const Body& b)
 									   b.position);
 
 	return Body(pos, total_mass, direction, false);
+}
+
+Vector2f tangentThroughPoint(Vector2f circle_center, float radius, Vector2f point)
+{
+	Vector2f dir = point - circle_center;
+	float len = sqrt(dir.x*dir.x + dir.y*dir.y);
+	float angle = atan2(dir.y, dir.x);
+
+	float tangent_length = sqrt(len*len - radius*radius);
+	float tangent_angle = asin(radius/len);
+
+	//Vector2f pos(angle+tangent_angle);
+	float neg(angle-tangent_angle);
+
+	return Vector2f(cos(neg), sin(neg));
 }

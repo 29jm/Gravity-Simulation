@@ -30,7 +30,7 @@ private:
 	void savePlanetPath(const Body& b);
 
 	std::vector<Body> planets;
-	sf::VertexArray old_paths;
+	std::vector<sf::VertexArray> old_paths;
 	bool show_path;
 
 	// Protodisk stuff
@@ -39,5 +39,6 @@ private:
 };
 
 Body combinedPlanets(const Body& a, const Body& b);
+sf::Vector2f tangentThroughPoint(sf::Vector2f circle_center, float radius, sf::Vector2f point);
 
 #endif // UNIVERSE_HPP
