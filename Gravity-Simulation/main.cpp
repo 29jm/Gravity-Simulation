@@ -230,7 +230,7 @@ int main()
 		
 		window.display();
 
-		sleep(milliseconds(3));
+		sleep(milliseconds(1));
 	}
 
 	return 0;
