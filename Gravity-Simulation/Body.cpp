@@ -64,8 +64,7 @@ void Body::move(float dt)
 		
 	if (show_path)
 	{
-		Vector2f center(Vector2f(position.x+radius, position.y+radius)); 
-		path.append(Vertex(center, shape.getFillColor()));
+		path.append(Vertex(getCenter(), shape.getFillColor()));
 	}
 }
 
@@ -85,22 +84,23 @@ void Body::applyGravityOf(const Body &b, float dt)
 	F /= mass;
 
 	// Get the unit vector to the other body
-	Vector2f target(b.position.x+b.radius, b.position.y+b.radius);
-	Vector2f center(position.x+radius, position.y+radius);
-	Vector2f to_Body(target - center);
+	Vector2f to_Body(b.getCenter() - getCenter());
 	to_Body = to_Body / r;
 
 	// Apply the force in the direction of the other body
 	direction += (to_Body * F) * dt;
 }
 
-float Body::getDistanceTo(const Body &b)
+float Body::getDistanceTo(const Body &b) const
 {
-	Vector2f target(b.position.x+b.radius, b.position.y+b.radius);
-	Vector2f center(position.x+radius, position.y+radius);
-	Vector2f c = target - center;
+	Vector2f c = b.getCenter() - getCenter();
 
 	return sqrt(c.x*c.x + c.y * c.y);
+}
+
+Vector2f Body::getCenter() const
+{
+	return Vector2f(position.x+radius, position.y+radius);
 }
 
 void Body::draw(RenderWindow &window)
@@ -114,31 +114,24 @@ void Body::draw(RenderWindow &window)
 	}
 }
 
-bool Body::collideWith(const Body &p)
+bool Body::collideWith(const Body &b) const
 {
-	Vector2f a = position;
-	a.x += radius;
-	a.y += radius;
+	Vector2f a = getCenter();
+	Vector2f c = b.getCenter();
 
-	Vector2f b = p.position;
-	b.x += p.radius;
-	b.y += p.radius;
+	float d = (a.x-c.x)*(a.x-c.x) + (a.y-c.y)*(a.y-c.y);
 
-	float d = (a.x-b.x)*(a.x-b.x) + (a.y-b.y)*(a.y-b.y);
-
-	if (d <= (radius+p.radius)*(radius+p.radius))
-		return true;
-	return false;
+	return (d <= (radius+b.radius)*(radius+b.radius));
 }
 
-bool Body::contains(const Vector2f &point)
+bool Body::contains(const Vector2f &point) const
 {
-	Vector2f center(position.x+radius, position.y+radius);
+	Vector2f center(getCenter());
 	return (point.x-center.x)*(point.x-center.x)
 		 + (point.y-center.y)*(point.y-center.y) <= radius*radius;
 }
 
-void Body::setPath(bool state)
+void Body::setPathEnabled(bool state)
 {
 	show_path = state;
 
@@ -146,6 +139,11 @@ void Body::setPath(bool state)
 	{
 		path.clear();
 	}
+}
+
+VertexArray Body::getPath() const
+{
+	return path;
 }
 
 // Handy helper fonctions
