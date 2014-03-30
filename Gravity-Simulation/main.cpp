@@ -9,9 +9,9 @@
 
 #define MASS 10
 #define BASE_LINE 2
-#define CLUSTER_RADIUS 500
-#define CLUSTER_NUMBER 400
-#define CLUSTER_MASS 1000
+#define CLUSTER_RADIUS 300
+#define CLUSTER_NUMBER 250
+#define CLUSTER_MASS 750
 
 #ifdef _WIN32
 	#define M_PI 3.14
@@ -193,9 +193,11 @@ int main()
 					is_placing = false;
 
 					Vector2f direction = end - start;
-
-					universe.addPlanet(Vector2f(line[0].position.x,
-							line[0].position.y), mass, direction);
+					float radius = Body::radiusForMass(mass);
+					Vector2f position = Vector2f(line[0].position.x-radius,
+						line[0].position.y-radius);
+					
+					universe.addPlanet(position, mass, direction);
 				}
 
 				if (is_moving)
