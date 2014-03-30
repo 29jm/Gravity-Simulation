@@ -11,9 +11,10 @@ public:
 	void move(float dt);
 	void applyGravityOf(const Body& b, float dt);
 	void draw(sf::RenderWindow& window);
-    bool collideWith(const Body& p);
-    bool contains(const sf::Vector2f& point);
-    void setPath(bool state);
+    bool collideWith(const Body& b) const;
+    bool contains(const sf::Vector2f& point) const;
+    void setPathEnabled(bool state);
+    sf::VertexArray getPath() const;
 
     sf::Vector2f position;
     sf::Vector2f direction;
@@ -22,7 +23,8 @@ public:
     bool show_path;
 
 private:
-	float getDistanceTo(const Body& b);
+	float getDistanceTo(const Body& b) const;
+    sf::Vector2f getCenter() const;
 
 	sf::CircleShape shape;
     sf::VertexArray path;
