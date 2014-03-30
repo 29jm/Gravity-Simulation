@@ -16,6 +16,8 @@ public:
     void setPathEnabled(bool state);
     sf::VertexArray getPath() const;
 
+    static float radiusForMass(uint64_t mass);
+
     sf::Vector2f position;
     sf::Vector2f direction;
     uint64_t mass;

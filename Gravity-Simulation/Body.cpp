@@ -22,11 +22,10 @@ Body::Body(Vector2f pos, uint64_t m, Vector2f dir, bool with_path)
 		cout << "FATAL ERROR: MASS <= 0" << endl;
 	}
 
-	cout << "MASS=" << mass << endl;
+	// cout << "MASS=" << mass << endl;
 
 	// Radius
-	float volume = mass / DENSITY;
-	radius = cbrt((3*volume)/(4*M_PI));
+	radius = radiusForMass(mass);
 	
 	if (radius < 1)
 	{
@@ -144,6 +143,12 @@ void Body::setPathEnabled(bool state)
 VertexArray Body::getPath() const
 {
 	return path;
+}
+
+float Body::radiusForMass(uint64_t mass)
+{
+	float volume = mass / DENSITY;
+	return cbrt((3*volume)/(4*M_PI));
 }
 
 // Handy helper fonctions
