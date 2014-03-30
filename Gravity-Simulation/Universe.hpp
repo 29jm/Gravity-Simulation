@@ -27,7 +27,10 @@ public:
 	void eraseAll();
 
 private:
+	void savePlanetPath(const Body& b);
+
 	std::vector<Body> planets;
+	sf::VertexArray old_paths;
 	bool show_path;
 
 	// Protodisk stuff

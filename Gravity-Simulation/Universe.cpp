@@ -4,7 +4,7 @@ using namespace sf;
 using namespace std;
 
 Universe::Universe()
-	: show_path(false)
+	: show_path(false), old_paths(LinesStrip)
 {
 
 }
@@ -16,7 +16,7 @@ void Universe::addPlanet(Vector2f position, uint64_t m, Vector2f dir)
 
 void Universe::addPlanet(Body p)
 {
-	p.setPath(show_path);
+	p.setPathEnabled(show_path);
 	planets.push_back(p);
 }
 
@@ -48,7 +48,12 @@ void Universe::togglePath()
 
 	for (Body& b : planets)
 	{
-		b.setPath(show_path);
+		b.setPathEnabled(show_path);
+	}
+
+	if (!show_path)
+	{
+		old_paths.clear();
 	}
 }
 
@@ -68,8 +73,12 @@ void Universe::move(float delta_t)
 				if (planets[i].collideWith(planets[j]))
 				{
 					Body p = combinedPlanets(planets[i], planets[j]);
-					p.setPath(show_path);
+					p.setPathEnabled(show_path);
+
 					planets.push_back(p);
+
+					savePlanetPath(planets[i]);
+					savePlanetPath(planets[j]);
 
 					planets.erase(planets.begin()+j);
 					planets.erase(planets.begin()+i);
@@ -92,6 +101,11 @@ void Universe::draw(RenderWindow& window)
 	{
 		b.draw(window);
 	}
+
+	if (show_path)
+	{
+		window.draw(old_paths);
+	}
 }
 
 void Universe::eraseAt(const Vector2f& pos)
@@ -108,8 +122,19 @@ void Universe::eraseAt(const Vector2f& pos)
 void Universe::eraseAll()
 {
 	planets.clear();
+	old_paths.clear();
 }
 
+void Universe::savePlanetPath(const Body& b)
+{
+	VertexArray path(b.getPath());
+	for (int i = 0; i < path.getVertexCount(); i++)
+	{
+		old_paths.append(path[i]);
+	}
+}
+
+// helper functions
 Body combinedPlanets(const Body& a, const Body& b)
 {
 	Vector2f p1m1 = float(a.mass)*a.direction;
