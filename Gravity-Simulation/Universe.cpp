@@ -45,7 +45,7 @@ void Universe::createProtodisk(const int number, const int radius, const int mas
 			dir = Vector2f();
 		}
 
-		dir *= 100.0f;
+		dir *= 125.0f;
 
 		cout << "dir=" << dir.x << ';' << dir.y << endl;
 
