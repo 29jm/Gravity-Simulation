@@ -17,13 +17,6 @@ using namespace std;
 Body::Body(Vector2f pos, uint64_t m, Vector2f dir, bool with_path)
 	: position(pos), direction(dir), mass(m), path(LinesStrip), show_path(with_path)
 {
-	if (mass <= 0)
-	{
-		cout << "FATAL ERROR: MASS <= 0" << endl;
-	}
-
-	// cout << "MASS=" << mass << endl;
-
 	// Radius
 	radius = radiusForMass(mass);
 	
@@ -71,9 +64,8 @@ void Body::applyGravityOf(const Body &b, float dt)
 {
 	float r = getDistanceTo(b);
 
-	if (r <= 0)
+	if (r <= b.radius)
 	{
-		cout << "return" << endl;
 		return;
 	}
 
@@ -90,6 +82,7 @@ void Body::applyGravityOf(const Body &b, float dt)
 	direction += (to_Body * F) * dt;
 }
 
+inline
 float Body::getDistanceTo(const Body &b) const
 {
 	Vector2f c = b.getCenter() - getCenter();
@@ -97,6 +90,7 @@ float Body::getDistanceTo(const Body &b) const
 	return sqrt(c.x*c.x + c.y * c.y);
 }
 
+inline
 Vector2f Body::getCenter() const
 {
 	return Vector2f(position.x+radius, position.y+radius);

@@ -22,7 +22,6 @@ void Universe::addPlanet(Body p)
 
 void Universe::createProtodisk(const int number, const int radius, const int mass, const sf::Vector2f& position)
 {
-	cout << "New protodisk: radius " << radius << endl;
 	for (int i = 0; i < number; i++)
 	{
 		float a = distribution(rng);
@@ -30,9 +29,7 @@ void Universe::createProtodisk(const int number, const int radius, const int mas
 
 		if (b > a)
 		{
-			float temp(a);
-			a = b;
-			b = temp;
+			std::swap(a, b);
 		}
 
 		Vector2f pos(b*radius*cos(2*M_PI*a/b), b*radius*sin(2*M_PI*a/b));
@@ -46,8 +43,6 @@ void Universe::createProtodisk(const int number, const int radius, const int mas
 		}
 
 		dir *= 125.0f;
-
-		cout << "dir=" << dir.x << ';' << dir.y << endl;
 
 		Body p(pos, mass, dir, show_path);
 		planets.push_back(p);
