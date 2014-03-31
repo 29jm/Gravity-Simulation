@@ -22,6 +22,7 @@ void Universe::addPlanet(Body p)
 
 void Universe::createProtodisk(const int number, const int radius, const int mass, const sf::Vector2f& position)
 {
+	int cancelled = 0;
 	for (int i = 0; i < number; i++)
 	{
 		float a = distribution(rng);
@@ -39,10 +40,12 @@ void Universe::createProtodisk(const int number, const int radius, const int mas
 		Vector2f dir = tangentThroughPoint(position, len, pos);
 		if (isnan(dir.x) || isnan(dir.y))
 		{
+			cout << "cancelled at len=" << len << endl;
+			cout << " - number " << ++cancelled  << endl;
 			dir = Vector2f();
 		}
 
-		dir *= 125.0f;
+		dir *= interpolate(125.0f, 75.0f, len/radius);
 
 		Body p(pos, mass, dir, show_path);
 		planets.push_back(p);
