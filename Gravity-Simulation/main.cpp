@@ -232,7 +232,7 @@ int main()
 		
 		window.display();
 
-		sleep(milliseconds(1));
+		// sleep(milliseconds(1));
 	}
 
 	return 0;
