@@ -144,18 +144,3 @@ float Body::radiusForMass(uint64_t mass)
 	float volume = mass / DENSITY;
 	return cbrt((3*volume)/(4*M_PI));
 }
-
-// Handy helper fonctions
-
-/*
- *	ratio is a number between 0.0f and 1.0f
- */
-Color interpolate(Color a, Color b, float ratio)
-{
-	Color c;
-	c.r = (b.r-a.r) * ratio + a.r;
-	c.g = (b.g-a.g) * ratio + a.g;
-	c.b = (b.b-a.b) * ratio + a.b;
-
-	return c;
-}

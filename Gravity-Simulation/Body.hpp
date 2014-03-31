@@ -32,6 +32,24 @@ private:
     sf::VertexArray path;
 };
 
-sf::Color interpolate(sf::Color a, sf::Color b, float delta_t);
+// Handy helper functions
+
+// ratio is a number between 0.0 and 1.0
+template <typename T, typename Real>
+T interpolate(T a, T b, Real ratio)
+{
+    return (b - a) * ratio + a;
+}
+
+template <typename Real>
+sf::Color interpolate(sf::Color a, sf::Color b, Real ratio)
+{
+    sf::Color c;
+    c.r = (b.r-a.r) * ratio + a.r;
+    c.g = (b.g-a.g) * ratio + a.g;
+    c.b = (b.b-a.b) * ratio + a.b;
+
+    return c;
+}
 
 #endif // BODY_HPP
