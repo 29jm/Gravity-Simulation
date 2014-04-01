@@ -20,6 +20,7 @@ public:
 	void addPlanet(Body p);
 	void createProtodisk(const int number, const int radius, const int mass, const sf::Vector2f& position);
 	void togglePath();
+	uint64_t getPlanetNumber() const;
 
 	void move(float delta_t);
 	void draw(sf::RenderWindow& window);
@@ -39,6 +40,6 @@ private:
 };
 
 Body combinedPlanets(const Body& a, const Body& b);
-sf::Vector2f tangentThroughPoint(sf::Vector2f circle_center, float radius, sf::Vector2f point);
+sf::Vector2f tangentThroughPoint(sf::Vector2f circle_center, sf::Vector2f point);
 
 #endif // UNIVERSE_HPP

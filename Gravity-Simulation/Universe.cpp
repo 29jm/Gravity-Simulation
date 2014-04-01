@@ -22,30 +22,30 @@ void Universe::addPlanet(Body p)
 
 void Universe::createProtodisk(const int number, const int radius, const int mass, const sf::Vector2f& position)
 {
-	int cancelled = 0;
+	std::uniform_real_distribution<float> distribution(0.0f, float(radius));
 	for (int i = 0; i < number; i++)
 	{
-		float a = distribution(rng);
-		float b = distribution(rng);
+		// float a = distribution(rng);
+		// float b = distribution(rng);
 
-		if (b > a)
-		{
-			std::swap(a, b);
-		}
+		// if (b > a)
+		// {
+		// 	std::swap(a, b);
+		// }
 
-		Vector2f pos(b*radius*cos(2*M_PI*a/b), b*radius*sin(2*M_PI*a/b));
+		// Vector2f pos(b*radius*cos(2*M_PI*a/b), b*radius*sin(2*M_PI*a/b));
+
+		float t = 2*M_PI*distribution(rng);
+		float u = distribution(rng)+distribution(rng);
+		float r = (u > 1 ? 2-u : u);
+		Vector2f pos(r*cos(t), r*sin(t));
+
 		float len = sqrt(pos.x*pos.x + pos.y*pos.y);
 		pos += position;
 
-		Vector2f dir = tangentThroughPoint(position, len, pos);
-		if (isnan(dir.x) || isnan(dir.y))
-		{
-			cout << "cancelled at len=" << len << endl;
-			cout << " - number " << ++cancelled  << endl;
-			dir = Vector2f();
-		}
+		Vector2f dir = tangentThroughPoint(position, pos);
 
-		dir *= interpolate(125.0f, 75.0f, len/radius);
+		dir *= interpolate(-5.0f, 140.0f, len/radius);
 
 		Body p(pos, mass, dir, show_path);
 		planets.push_back(p);
@@ -65,6 +65,11 @@ void Universe::togglePath()
 	{
 		old_paths.clear();
 	}
+}
+
+uint64_t Universe::getPlanetNumber() const
+{
+	return planets.size();
 }
 
 void Universe::move(float delta_t)
@@ -92,6 +97,8 @@ void Universe::move(float delta_t)
 
 					planets.erase(planets.begin()+j);
 					planets.erase(planets.begin()+i);
+
+					// cout << "2 planets erased" << endl;
 				}
 
 				planets[i].applyGravityOf(planets[j], delta_t);
@@ -128,6 +135,7 @@ void Universe::eraseAt(const Vector2f& pos)
 		if (planets[i].contains(Vector2f(pos.x, pos.y)))
 		{
 			planets.erase(planets.begin()+i);
+			cout << "one planet erased" << endl;
 		}
 	}
 }
@@ -158,17 +166,11 @@ Body combinedPlanets(const Body& a, const Body& b)
 	return Body(pos, total_mass, direction, false);
 }
 
-Vector2f tangentThroughPoint(Vector2f circle_center, float radius, Vector2f point)
+Vector2f tangentThroughPoint(Vector2f circle_center, Vector2f point)
 {
-	Vector2f dir = point - circle_center;
-	float len = sqrt(dir.x*dir.x + dir.y*dir.y);
-	float angle = atan2(dir.y, dir.x);
+	Vector2f r(point - circle_center);
+	Vector2f tangent(r.y, -r.x);
+	tangent /= sqrt(r.x*r.x + r.y*r.y); // unit vector = vec/vec.length
 
-	float tangent_length = sqrt(len*len - radius*radius);
-	float tangent_angle = asin(radius/len);
-
-	//Vector2f pos(angle+tangent_angle);
-	float neg(angle-tangent_angle);
-
-	return Vector2f(cos(neg), sin(neg));
+	return tangent;
 }

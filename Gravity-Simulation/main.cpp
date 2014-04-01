@@ -9,9 +9,9 @@
 
 #define MASS 10
 #define BASE_LINE 2
-#define CLUSTER_RADIUS 300
-#define CLUSTER_NUMBER 250
-#define CLUSTER_MASS 750
+#define CLUSTER_RADIUS 100
+#define CLUSTER_NUMBER 1000
+#define CLUSTER_MASS 1000
 
 #ifdef _WIN32
 	#define M_PI 3.14
@@ -22,7 +22,7 @@ using namespace std;
 
 int main()
 {
-	unsigned int width(800), height(600);
+	unsigned int width(1024), height(768);
 	RenderWindow window(VideoMode(width, height), "Gravity Simulation by Johan");
 	View view(FloatRect(0, 0, width, height));
 
@@ -34,7 +34,8 @@ int main()
 	// Logic vars
 	Clock timer;
 	float delta_t(0);
-	int mass(MASS);
+	uint64_t mass(MASS);
+	uint64_t num_planets(0);
 	Vector2f mousePosition;
 	Vector2f start, end;
 	bool running = true;
@@ -77,10 +78,6 @@ int main()
 				case Keyboard::PageUp:
 				case Keyboard::Add:
 					mass *= 10;
-					if (mass < 0)
-					{
-						mass = MASS;
-					}
 					cout << "Mass is now " << mass << endl;
 					break;
 
@@ -212,6 +209,12 @@ int main()
 				view.zoom(factor);
 				window.setView(view);
 			}
+		}
+
+		if (num_planets != universe.getPlanetNumber())
+		{
+			num_planets = universe.getPlanetNumber();
+			cout << "Planet number : " << num_planets << endl;
 		}
 
 		// Delta T
