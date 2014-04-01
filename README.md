@@ -3,6 +3,8 @@ Gravity-Simulation
 
 A gravity simulation aiming to copy http://www.nowykurier.com/toys/gravity/gravity.html
 
+![image](29jm.github.com/Gravity-Simulation/img/screenshot1.png)
+
 Features
 ========
 
