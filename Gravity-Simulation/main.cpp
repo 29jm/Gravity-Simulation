@@ -17,6 +17,8 @@
 	#define M_PI 3.14
 #endif
 
+#define MAX_DELTA_T (1.0f/30)
+
 using namespace sf;
 using namespace std;
 
@@ -219,6 +221,11 @@ int main()
 
 		// Delta T
 		delta_t = timer.restart().asSeconds();
+
+		if (delta_t > MAX_DELTA_T)
+		{
+			delta_t = MAX_DELTA_T;
+		}
 
 		window.clear();
 
