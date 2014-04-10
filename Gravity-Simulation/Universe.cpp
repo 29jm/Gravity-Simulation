@@ -4,7 +4,7 @@ using namespace sf;
 using namespace std;
 
 Universe::Universe()
-	: show_path(false), old_paths(LinesStrip)
+	: old_paths(LinesStrip), show_path(false)
 {
 
 }
@@ -23,20 +23,12 @@ void Universe::addPlanet(Body p)
 void Universe::createProtodisk(const int number, const int radius, const int mass, const sf::Vector2f& position)
 {
 	std::uniform_real_distribution<float> distribution(0.0f, float(radius));
+	auto random = std::bind(distribution, rng);
+
 	for (int i = 0; i < number; i++)
 	{
-		// float a = distribution(rng);
-		// float b = distribution(rng);
-
-		// if (b > a)
-		// {
-		// 	std::swap(a, b);
-		// }
-
-		// Vector2f pos(b*radius*cos(2*M_PI*a/b), b*radius*sin(2*M_PI*a/b));
-
-		float t = 2*M_PI*distribution(rng);
-		float u = distribution(rng)+distribution(rng);
+		float t = 2*M_PI*random();
+		float u = random()+random();
 		float r = (u > 1 ? 2-u : u);
 		Vector2f pos(r*cos(t), r*sin(t));
 
