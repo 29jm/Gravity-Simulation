@@ -1,5 +1,5 @@
 COMPILER=clang++
-OPTIONS=-std=c++11
+OPTIONS=-std=c++11 -Wall -Wextra
 
 ifdef SystemRoot
 	COMPILER = g++
