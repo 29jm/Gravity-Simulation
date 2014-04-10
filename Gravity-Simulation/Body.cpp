@@ -15,7 +15,7 @@ using namespace sf;
 using namespace std;
 
 Body::Body(Vector2f pos, uint64_t m, Vector2f dir, bool with_path)
-	: position(pos), direction(dir), mass(m), path(LinesStrip), show_path(with_path)
+	: position(pos), direction(dir), mass(m), show_path(with_path), path(LinesStrip)
 {
 	// Radius
 	radius = radiusForMass(mass);
