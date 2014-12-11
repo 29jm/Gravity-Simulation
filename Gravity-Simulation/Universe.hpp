@@ -4,6 +4,7 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
 #include <random>
+#include <functional>
 #include <cmath>
 #include "Body.hpp"
 
@@ -36,7 +37,6 @@ private:
 
 	// Protodisk stuff
 	std::mt19937 rng;
-	std::uniform_real_distribution<float> distribution;
 };
 
 Body combinedPlanets(const Body& a, const Body& b);

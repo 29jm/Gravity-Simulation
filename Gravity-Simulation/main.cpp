@@ -13,7 +13,7 @@
 #define CLUSTER_NUMBER 1000
 #define CLUSTER_MASS 1000
 
-#ifdef _WIN32
+#ifndef M_PI
 	#define M_PI 3.14
 #endif
 
@@ -25,12 +25,13 @@ using namespace std;
 int main()
 {
 	unsigned int width(1024), height(768);
-	RenderWindow window(VideoMode(width, height), "Gravity Simulation by Johan");
 	View view(FloatRect(0, 0, width, height));
+
+	RenderWindow window(VideoMode(width, height), "Gravity Simulation by Johan");
+	window.setView(view);
 
 	// Drawable elements
 	Universe universe;
-	VertexArray line(Lines, 2);
 	CircleShape base_line(BASE_LINE);
 
 	// Logic vars
@@ -40,6 +41,8 @@ int main()
 	uint64_t num_planets(0);
 	Vector2f mousePosition;
 	Vector2f start, end;
+
+	// Interface vars
 	bool running = true;
 	bool is_placing = false;
 	bool is_moving = false;
@@ -47,10 +50,10 @@ int main()
 	bool shift = false;
 
 	// Some inits
+	VertexArray line(Lines, 2);
 	line[0].color = Color::Blue;
 	line[1].color = Color::Green;
 	base_line.setFillColor(Color::Blue);
-	window.setView(view);
 
 	while (running)
 	{
