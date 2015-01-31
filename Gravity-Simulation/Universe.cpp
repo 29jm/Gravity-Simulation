@@ -37,7 +37,7 @@ void Universe::createProtodisk(const int number, const int radius, const int mas
 
 		Vector2f dir = tangentThroughPoint(position, pos);
 
-		dir *= interpolate(-5.0f, 140.0f, len/radius);
+		dir *= interpolate(-5.0f, 60.0f, len/radius);
 
 		Body p(pos, mass, dir, show_path);
 		planets.push_back(p);

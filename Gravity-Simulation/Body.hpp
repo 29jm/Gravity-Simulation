@@ -3,6 +3,9 @@
 
 #include <SFML/Graphics.hpp>
 
+#define G 1
+#define DENSITY 100 // kg/m^3
+
 class Body
 {
 public:

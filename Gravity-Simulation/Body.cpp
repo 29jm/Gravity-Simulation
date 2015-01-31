@@ -1,15 +1,7 @@
-#ifdef _WIN32
-#define M_PI 3.14
-#endif
-
 #include <cmath>
 #include <iostream>
-#include <fstream>
 
 #include "Body.hpp"
-
-#define G 15 // TODO: Get the right number
-#define DENSITY 100 // kg/m^3
 
 using namespace sf;
 using namespace std;
