@@ -83,7 +83,6 @@ int main()
 				case Keyboard::PageUp:
 				case Keyboard::Add:
 					mass *= 10;
-					cout << "Mass is now " << mass << endl;
 					break;
 
 				case Keyboard::PageDown:
@@ -96,7 +95,6 @@ int main()
 					{
 						mass = MASS;
 					}
-					cout << "Mass is now " << mass << endl;
 					break;
 
 				case Keyboard::T:
@@ -104,11 +102,6 @@ int main()
 					break;
 
 				case Keyboard::Space:
-					if (is_placing)
-					{
-						cout << "Planet placement cancelled" << endl;
-					}
-	  
 					is_placing = false;
 					break;
 
@@ -219,7 +212,6 @@ int main()
 		if (num_planets != universe.getPlanetNumber())
 		{
 			num_planets = universe.getPlanetNumber();
-			cout << "Planet number : " << num_planets << endl;
 		}
 
 		// Delta T
