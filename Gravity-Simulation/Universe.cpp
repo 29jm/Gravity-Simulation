@@ -64,6 +64,11 @@ uint64_t Universe::getPlanetNumber() const
 	return planets.size();
 }
 
+bool Universe::isPathEnabled() const
+{
+	return show_path;
+}
+
 void Universe::move(float delta_t)
 {
 	if (planets.size() < 1)

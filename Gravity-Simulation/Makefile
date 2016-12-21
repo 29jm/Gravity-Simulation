@@ -1,7 +1,7 @@
 CXXFLAGS = -std=c++14 -Wall -Wextra
 
-all: Universe Body main
-	$(CXX) $(CXXFLAGS) Universe.o Body.o main.o -lsfml-graphics -lsfml-window -lsfml-system -o gravity
+all: Universe Body Interface main
+	$(CXX) $(CXXFLAGS) Universe.o Body.o Interface.o main.o -lsfml-graphics -lsfml-window -lsfml-system -o gravity
 
 debug: CXXFLAGS += -g
 debug: all
@@ -20,6 +20,9 @@ Universe: Universe.cpp
 
 Body: Body.cpp
 	$(CXX) $(CXXFLAGS) -c Body.cpp -o Body.o
+
+Interface: Interface.cpp
+	$(CXX) $(CXXFLAGS) -c Interface.cpp -o Interface.o
 
 main: main.cpp
 	$(CXX) $(CXXFLAGS) -c main.cpp -o main.o
