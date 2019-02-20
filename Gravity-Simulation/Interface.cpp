@@ -79,6 +79,7 @@ void Interface::handle_event(Event evt)
 			break;
 		case Keyboard::Delete:
 			universe.eraseAll();
+			break;
 		default:
 			break;
 		}
@@ -89,8 +90,10 @@ void Interface::handle_event(Event evt)
 		{
 		case Keyboard::LControl:
 			modifiers.control = false;
+			break;
 		case Keyboard::LShift:
 			modifiers.shift = false;
+			break;
 		default:
 			break;
 		}

@@ -71,35 +71,34 @@ bool Universe::isPathEnabled() const
 
 void Universe::move(float delta_t)
 {
-	if (planets.size() < 1)
-	{
-		return;
-	}
-
 	for (unsigned int i = 0; i < planets.size(); i++)
 	{
 		for (unsigned int j = 0; j < planets.size(); j++)
 		{
-			if (i != j)
+			if (i == j)
+				continue;
+
+			if (planets[i].collideWith(planets[j]))
 			{
-				if (planets[i].collideWith(planets[j]))
-				{
-					Body p = combinedPlanets(planets[i], planets[j]);
-					p.setPathEnabled(show_path);
+				Body p = combinedPlanets(planets[i], planets[j]);
+				p.setPathEnabled(show_path);
 
-					planets.push_back(p);
+				savePlanetPath(planets[i]);
+				savePlanetPath(planets[j]);
 
-					savePlanetPath(planets[i]);
-					savePlanetPath(planets[j]);
+				int a = max(i, j), b = min(i, j);
+				planets.erase(planets.begin()+a);
+				planets.erase(planets.begin()+b);
 
-					planets.erase(planets.begin()+j);
-					planets.erase(planets.begin()+i);
-
-					// cout << "2 planets erased" << endl;
-				}
-
+				planets.push_back(p);
+			}
+			else
+			{
 				planets[i].applyGravityOf(planets[j], delta_t);
 			}
+
+			if (i >= planets.size())
+				break;
 		}
 	}
 
