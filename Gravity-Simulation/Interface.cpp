@@ -5,11 +5,11 @@
 using namespace sf;
 
 Interface::Interface(RenderWindow& win, Universe& verse)
-	: modifiers{false, false, false, false},
-	universe(verse), window(win),
+	: modifiers{false, false, false, false, false},
+	universe(verse), followedPlanet(nullptr), window(win),
 	view(Vector2f(0, 0), Vector2f(win.getSize())),
 	base_line(BASE_LINE), line(Lines, 2),
-	mass(MASS), num_planets(0)
+	mass(MASS), num_planets(0), zoom(1.0)
 {
 	window.setView(view);
 
@@ -74,6 +74,9 @@ void Interface::handle_event(Event evt)
 		case Keyboard::LShift:
 			modifiers.shift = true;
 			break;
+		case Keyboard::RControl:
+			modifiers.rcontrol = true;
+			break;
 		case Keyboard::C:
 			universe.createProtodisk(CLUSTER_NUMBER, CLUSTER_RADIUS, CLUSTER_MASS, view.getCenter());
 			break;
@@ -94,6 +97,9 @@ void Interface::handle_event(Event evt)
 		case Keyboard::LShift:
 			modifiers.shift = false;
 			break;
+		case Keyboard::RControl:
+			modifiers.rcontrol = false;
+			break;
 		default:
 			break;
 		}
@@ -107,6 +113,14 @@ void Interface::handle_event(Event evt)
 		else if (modifiers.control)
 		{
 			modifiers.is_moving = true;
+		}
+		else if (modifiers.rcontrol) // Follow clicked planet
+		{
+			auto pos = window.mapPixelToCoords(Vector2i(evt.mouseButton.x, evt.mouseButton.y));
+			Vector2f incr = universe.followPlanetAt(pos);
+
+			view.move(-incr);
+			window.setView(view);
 		}
 		else
 		{
@@ -160,6 +174,7 @@ void Interface::handle_event(Event evt)
 	else if (evt.type == Event::MouseWheelMoved)
 	{
 		float factor = (evt.mouseWheel.delta < 1 ? 1.10 : 0.90);
+		zoom *= factor;
 		view.zoom(factor);
 		window.setView(view);
 	}
@@ -183,6 +198,14 @@ void Interface::draw()
 	mass_text.setString("Mass: "+std::to_string(mass));
 	num_planets_text.setString("Number of planets: "+std::to_string(num_planets));
 	paths_text.setString(std::string("Paths: ")+(universe.isPathEnabled() ? "True" : "False"));
+
+	// Move the view along the followed planet if any
+	if (followedPlanet)
+	{
+		// view.move(mousePosition - window.mapPixelToCoords(Vector2i(evt.mouseMove.x, evt.mouseMove.y)));
+		// view.setCenter(followedPlanet->position);
+		// window.setView(view);
+	}
 
 	// Reset view to draw text in window coordinates
 	View v = window.getView();

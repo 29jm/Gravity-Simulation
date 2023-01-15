@@ -1,23 +1,30 @@
 #include "Universe.hpp"
 
+#include <set>
+
 using namespace sf;
 using namespace std;
 
 Universe::Universe()
-	: old_paths(LinesStrip), show_path(false)
+	: followedPlanet(nullptr), old_paths(LinesStrip), show_path(false)
 {
 
 }
 
 void Universe::addPlanet(Vector2f position, uint64_t m, Vector2f dir)
 {
-	planets.push_back(Body(position, m, dir, show_path));
+	if (followedPlanet) {
+		position += followedPlanet->position;
+		dir += followedPlanet->direction;
+	}
+
+	planets.push_front(Body(position, m, dir, show_path));
 }
 
 void Universe::addPlanet(Body p)
 {
 	p.setPathEnabled(show_path);
-	planets.push_back(p);
+	planets.push_front(p);
 }
 
 void Universe::createProtodisk(const int number, const int radius, const int mass, const sf::Vector2f& position)
@@ -40,7 +47,7 @@ void Universe::createProtodisk(const int number, const int radius, const int mas
 		dir *= interpolate(-5.0f, 60.0f, len/radius);
 
 		Body p(pos, mass, dir, show_path);
-		planets.push_back(p);
+		planets.push_front(p);
 	}
 }
 
@@ -71,40 +78,81 @@ bool Universe::isPathEnabled() const
 
 void Universe::move(float delta_t)
 {
-	for (unsigned int i = 0; i < planets.size(); i++)
-	{
-		for (unsigned int j = 0; j < planets.size(); j++)
-		{
-			if (i == j)
-				continue;
+	std::set<int> dlist;
+	std::list<Body> new_planets;
+	int i = 0, j = 0;
 
-			if (planets[i].collideWith(planets[j]))
+	for (auto it_i = planets.begin(); it_i != planets.end(); it_i++) {
+		j = 0;
+		auto it_j = planets.begin();
+		for (; it_j != planets.end(); it_j++) {
+			Body& a = *it_i;
+			Body& b = *it_j;
+
+			if (it_i == it_j || dlist.find(i) != dlist.end() || dlist.find(j) != dlist.end()) {
+				j++;
+				continue;
+			}
+
+			if (a.collideWith(b))
 			{
-				Body p = combinedPlanets(planets[i], planets[j]);
+				// Merge the colliding planets
+				Body p = combinedPlanets(a, b);
 				p.setPathEnabled(show_path);
 
-				savePlanetPath(planets[i]);
-				savePlanetPath(planets[j]);
+				if (&a == followedPlanet || &b == followedPlanet) {
+					p.next_to_be_followed = true;
+				}
 
-				int a = max(i, j), b = min(i, j);
-				planets.erase(planets.begin()+a);
-				planets.erase(planets.begin()+b);
+				new_planets.push_back(p);
 
-				planets.push_back(p);
+				// Save their paths
+				savePlanetPath(a);
+				savePlanetPath(b);
+
+				// Mark the colliding planets for deletion
+				dlist.insert(i);
+				dlist.insert(j);
+
 			}
 			else
 			{
-				planets[i].applyGravityOf(planets[j], delta_t);
+				a.applyGravityOf(b, delta_t);
 			}
 
-			if (i >= planets.size())
-				break;
+			j++;
+		}
+		i++;
+	}
+
+	auto it = planets.begin();
+	i = 0;
+	while (it != planets.end()) {
+		if (dlist.find(i) != dlist.end()) {
+			if (&*it == followedPlanet) {
+				followedPlanet = nullptr;
+			}
+
+			planets.erase(it++);
+		} else {
+			it++;
+		}
+
+		i++;
+	}
+
+	for (Body& b : new_planets) {
+		planets.push_front(b);
+
+		if (planets.front().next_to_be_followed) {
+			followedPlanet = &planets.front();
+			planets.front().next_to_be_followed = false;
 		}
 	}
 
 	for (Body& b : planets)
 	{
-		b.move(delta_t);
+		b.move(delta_t, followedPlanet ? followedPlanet->position : sf::Vector2f());
 	}
 }
 
@@ -112,10 +160,10 @@ void Universe::draw(RenderWindow& window)
 {
 	for (Body& b : planets)
 	{
-		b.draw(window);
+		b.draw(window, followedPlanet);
 	}
 
-	if (show_path)
+	if (show_path && !followedPlanet)
 	{
 		for (VertexArray& path : old_paths)
 		{
@@ -124,14 +172,54 @@ void Universe::draw(RenderWindow& window)
 	}
 }
 
+Body* Universe::planetAt(const sf::Vector2f &pos)
+{
+	for (Body& p : planets)
+	{
+		if (p.contains(Vector2f(pos.x, pos.y)))
+		{
+			return &p;
+		}
+	}
+
+	return nullptr;
+}
+
+sf::Vector2f Universe::followPlanetAt(sf::Vector2f pos)
+{
+	sf::Vector2f oldFollow;
+
+	if (followedPlanet) {
+		pos += followedPlanet->position;
+		oldFollow = followedPlanet->position;
+	}
+
+	followedPlanet = planetAt(pos);
+
+	if (followedPlanet) {
+		// Purge paths
+		old_paths.clear();
+		togglePath();
+		togglePath();
+
+		return followedPlanet->position - oldFollow;
+	} else {
+		return -oldFollow;
+	}
+}
+
 void Universe::eraseAt(const Vector2f& pos)
 {
-	for (unsigned int i = 0; i < planets.size(); i++)
+	for (auto it = planets.begin(); it != planets.end(); it++)
 	{
-		if (planets[i].contains(Vector2f(pos.x, pos.y)))
+		if (it->contains(Vector2f(pos.x, pos.y)))
 		{
-			planets.erase(planets.begin()+i);
-			cout << "one planet erased" << endl;
+			if (&*it == followedPlanet) {
+				followedPlanet = nullptr;
+			}
+
+			planets.erase(it);
+			return;
 		}
 	}
 }
@@ -140,6 +228,7 @@ void Universe::eraseAll()
 {
 	planets.clear();
 	old_paths.clear();
+	followedPlanet = nullptr;
 }
 
 void Universe::savePlanetPath(const Body& b)

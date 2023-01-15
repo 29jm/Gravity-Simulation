@@ -24,9 +24,11 @@ private:
 		bool is_moving;
 		bool control;
 		bool shift;
+		bool rcontrol;
 	} modifiers;
 
 	Universe& universe;
+	Body* followedPlanet;
 	sf::RenderWindow& window;
 
 	sf::View view;
@@ -39,6 +41,7 @@ private:
 
 	uint64_t mass;
 	uint64_t num_planets;
+	float zoom;
 	sf::Vector2f mousePosition;
 	sf::Vector2f start;
 	sf::Vector2f end;

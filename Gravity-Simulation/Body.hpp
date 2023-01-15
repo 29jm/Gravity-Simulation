@@ -11,9 +11,9 @@ class Body
 public:
     Body(sf::Vector2f pos, uint64_t m, sf::Vector2f dir, bool with_path);
 
-	void move(float dt);
+	void move(float dt, const sf::Vector2f& ref_pos = sf::Vector2f());
 	void applyGravityOf(const Body& b, float dt);
-	void draw(sf::RenderWindow& window);
+	void draw(sf::RenderWindow& window, Body* ref = nullptr);
     bool collideWith(const Body& b) const;
     bool contains(const sf::Vector2f& point) const;
     void setPathEnabled(bool state);
@@ -26,6 +26,7 @@ public:
     uint64_t mass;
     float radius;
     bool show_path;
+    bool next_to_be_followed;
 
 private:
 	float getDistanceTo(const Body& b) const;

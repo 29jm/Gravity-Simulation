@@ -7,7 +7,8 @@ using namespace sf;
 using namespace std;
 
 Body::Body(Vector2f pos, uint64_t m, Vector2f dir, bool with_path)
-	: position(pos), direction(dir), mass(m), show_path(with_path), path(LinesStrip)
+	: position(pos), direction(dir), mass(m),
+	  show_path(with_path), path(LinesStrip), next_to_be_followed(false)
 {
 	// Radius
 	radius = radiusForMass(mass);
@@ -42,13 +43,13 @@ Body::Body(Vector2f pos, uint64_t m, Vector2f dir, bool with_path)
 	shape.setFillColor(color);
 }
 
-void Body::move(float dt)
+void Body::move(float dt, const sf::Vector2f& ref_pos)
 {
 	position += direction * dt;
 		
 	if (show_path)
 	{
-		path.append(Vertex(getCenter(), shape.getFillColor()));
+		path.append(Vertex(getCenter() - ref_pos, shape.getFillColor()));
 	}
 }
 
@@ -88,9 +89,17 @@ Vector2f Body::getCenter() const
 	return Vector2f(position.x+radius, position.y+radius);
 }
 
-void Body::draw(RenderWindow &window)
+void Body::draw(RenderWindow &window, Body* ref)
 {
-	shape.setPosition(position);
+	if (ref)
+	{
+		shape.setPosition(position - ref->position);
+	}
+	else
+	{
+		shape.setPosition(position);
+	}
+
 	window.draw(shape);
 	
 	if (show_path)
